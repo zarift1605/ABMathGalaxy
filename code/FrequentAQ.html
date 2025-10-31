@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ - ABMath Galaxy</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(to right, #1d4ed8, #9333ea);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        overflow-y: auto;
+        position: relative;
+    }
+    .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.2em;
+        color: white;
+    }
+    .music-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 1.5em;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
+    .faq-container {
+        margin-top: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 20px;
+        width: 90%;
+        max-width: 500px;
+    }
+    .faq-item {
+        margin-bottom: 10px;
+    }
+    .faq-question {
+        font-weight: bold;
+        cursor: pointer;
+        padding: 10px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.1);
+    }
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+        padding: 0 10px;
+    }
+    .faq-item.active .faq-answer {
+        max-height: 100px;
+        margin-top: 5px;
+    }
+</style>
+</head>
+<body>
+
+<!-- Background Music -->
+<audio id="bg-music" autoplay loop>
+    <source src="bgMusic.mp3" type="audio/mpeg">
+</audio>
+
+<button class="back-btn" onclick="window.location.href='settings.html'">&#8592;</button>
+<button class="music-btn" onclick="toggleMusic()">🔊</button>
+
+<div class="faq-container">
+    <h2>Soalan Lazim</h2>
+    <div class="faq-item">
+        <div class="faq-question">Bagaimana cara untuk menetapkan semula kata laluan saya?</div>
+        <div class="faq-answer"><p>Pergi ke Sunting Profil dan pilih kata laluan baharu.</p></div>
+    </div>
+    <div class="faq-item">
+        <div class="faq-question">Bagaimana saya boleh menukar bahasa?</div>
+        <div class="faq-answer"><p>Buka halaman Tukar Bahasa dalam menu tetapan.</p></div>
+    </div>
+    <div class="faq-item">
+        <div class="faq-question">Bolehkah saya mematikan bunyi?</div>
+        <div class="faq-answer"><p>Ya, pergi ke Tetapan Bunyi dan nyahpilih pilihan yang ada.</p></div>
+    </div>
+</div>
+
+
+<script>
+    const bgMusic = document.getElementById('bg-music');
+
+    window.addEventListener('load', () => {
+        const savedVolume = localStorage.getItem('volumeLevel');
+        if (savedVolume !== null) bgMusic.volume = savedVolume / 100;
+        const savedTime = localStorage.getItem('bgMusicTime');
+        if (savedTime) bgMusic.currentTime = parseFloat(savedTime);
+        if (localStorage.getItem('musicEnabled') === 'false') bgMusic.pause();
+    });
+
+    window.addEventListener('beforeunload', () => {
+        localStorage.setItem('bgMusicTime', bgMusic.currentTime);
+    });
+
+    function toggleMusic() {
+        const btn = document.querySelector('.music-btn');
+        if (bgMusic.paused) {
+            bgMusic.play();
+            btn.textContent = '🔊';
+            localStorage.setItem('musicEnabled', true);
+        } else {
+            bgMusic.pause();
+            btn.textContent = '🔇';
+            localStorage.setItem('musicEnabled', false);
+        }
+    }
+
+    document.querySelectorAll('.faq-question').forEach(q => {
+        q.addEventListener('click', () => q.parentElement.classList.toggle('active'));
+    });
+
+window.addEventListener('load', () => {
+    // Restore volume
+    const savedVolume = localStorage.getItem('volumeLevel');
+    if (savedVolume !== null) {
+        bgMusic.volume = savedVolume / 100;
+        if (popSound) popSound.volume = savedVolume / 100;
+    }
+
+    // Restore music toggle
+    const musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
+    if (!musicEnabled) {
+        bgMusic.pause();
+    } else {
+        // Restore playback time
+        const savedTime = localStorage.getItem('bgMusicTime');
+        if (savedTime) bgMusic.currentTime = parseFloat(savedTime);
+        bgMusic.play();
+    }
+
+    // Restore effects toggle
+    const effectsEnabled = localStorage.getItem('effectsEnabled') !== 'false';
+    if (popSound) {
+        popSound.volume = effectsEnabled ? (savedVolume / 100 || 0.7) : 0;
+    }
+});
+
+window.addEventListener('beforeunload', () => {
+    localStorage.setItem('bgMusicTime', bgMusic.currentTime);
+});
+window.addEventListener('load', () => {
+    const music = document.getElementById('bg-music');
+    const btn = document.querySelector('.music-btn');
+    const savedTime = localStorage.getItem('bgMusicTime');
+    const musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
+
+    if (savedTime) music.currentTime = parseFloat(savedTime);
+
+    if (!musicEnabled) {
+        music.pause();
+        btn.textContent = '🔇';
+    } else {
+        music.play();
+        btn.textContent = '🔊';
+    }
+
+    // Restore volume
+    const savedVolume = localStorage.getItem('volumeLevel');
+    if (savedVolume !== null) {
+        music.volume = savedVolume / 100;
+    }
+});
+
+window.addEventListener('beforeunload', () => {
+    const music = document.getElementById('bg-music');
+    localStorage.setItem('bgMusicTime', music.currentTime);
+});
+</script>
+
+</body>
+</html>

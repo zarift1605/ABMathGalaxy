@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABMath Galaxy - Create Account</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            background: linear-gradient(to right, #9333ea, #1d4ed8); /* Existing background */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            color: white;
+            overflow: hidden; /* Prevent scrollbar from floating elements */
+            position: relative;
+        }
+
+        /* Card container for the form, matching the sign-in page style */
+        .card-container {
+            background-color: white;
+            border-radius: 30px; /* More rounded corners */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 90%; /* Adjust width for mobile */
+            max-width: 360px; /* Max width for larger screens */
+            padding: 25px;
+            text-align: center;
+            /* 👇 ADJUSTED: Slightly smaller margin-top for less gap */
+            margin-top: 20vh; 
+            position: relative;
+            z-index: 4; /* Ensure it's above floating elements */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-container h2 {
+            color: #333; /* Darker color for text inside the card */
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            color: #555;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 12px 15px;
+            padding-right: 40px; /* Space for eye icon */
+            border: 1px solid #ddd;
+            border-radius: 12px; /* Rounded input fields */
+            font-size: 1em;
+            color: #333;
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        .input-wrapper input::placeholder {
+            color: #aaa;
+        }
+
+        .input-wrapper .icon {
+            position: absolute;
+            right: 15px;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 25px; /* More rounded button */
+            background: linear-gradient(to right, #00f260, #0575e6); /* Green-blue gradient */
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0, 242, 96, 0.3); /* Shadow for primary button */
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 242, 96, 0.4);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            margin: 20px 0;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+
+        .divider:not(:empty)::before {
+            margin-right: .25em;
+        }
+
+        .divider:not(:empty)::after {
+            margin-left: .25em;
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd; /* Light border */
+            border-radius: 25px;
+            background-color: white;
+            color: #555;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-google img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .btn-google:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .btn-back {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background-color: #f0f0f0; /* Light grey background */
+            color: #555;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background-color: #e0e0e0;
+        }
+
+        .footer-links {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .footer-links a {
+            color: #0575e6; /* Blue for links */
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: #004d9c;
+        }
+
+        /* Floating animations (copied from your original) */
+        .icon-floating {
+            position: absolute;
+            width: 80px; /* Adjust size as needed */
+            z-index: 2;
+            animation: float 4s ease-in-out infinite;
+        }
+        .top-left-planet { top: 50px; left: 30px; width: 100px; }
+        .bottom-right-rocket { bottom: 50px; right: 30px; width: 90px; }
+        .center-planet-large { 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px; /* Larger planet for background */
+            opacity: 0.3; /* Make it subtle */
+            z-index: 1;
+            animation: spin 30s linear infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Title and subtitle above the card */
+        .header-content {
+            position: absolute;
+            /* 👇 ADJUSTED: Moved slightly lower than before */
+            top: 8vh; 
+            text-align: center;
+            z-index: 5; /* Ensure it's above everything */
+            color: white;
+        }
+
+        .header-content h1 {
+            margin: 0;
+            /* Kept small from previous request */
+            font-size: 2em; 
+            font-weight: 700;
+        }
+
+        .header-content h2 {
+            margin: 5px 0 0;
+            /* Kept small from previous request */
+            font-size: 1em; 
+            font-weight: 400;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+
+    <img src="meteor.png" alt="Planet" class="icon-floating top-left-planet">
+    <img src="https://via.placeholder.com/90/FFD700/FFFFFF?text=ROCKET" alt="Rocket" class="icon-floating bottom-right-rocket">
+    <img src="https://via.placeholder.com/250/33CCFF/FFFFFF?text=BIG+PLANET" alt="Big Planet" class="center-planet-large">
+
+    <div class="header-content">
+        <h1>ABMath</h1>
+        <h2>GALAXY - Cipta Akaun</h2>
+    </div>
+
+    <div class="card-container">
+        <h2>Cipta Akaun</h2>
+
+        <div class="input-group">
+            <label for="email">Email</label>
+            <div class="input-wrapper">
+                <input type="email" id="email" placeholder="Masukkan email">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="password">Kata Laluan</label>
+            <div class="input-wrapper">
+                <input type="password" id="password" placeholder="Masukkan kata laluan">
+                <span class="icon" id="togglePassword">👁</span>
+            </div>
+        </div>
+
+        <button class="btn-primary" id="email-signup-btn">Daftar</button>
+
+        <div class="divider">ATAU</div>
+
+        <button class="btn-google" id="google-signup-btn">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png" alt="Google icon">
+            Daftar menggunakan Google
+        </button>
+        
+        <button class="btn-back" id="back-to-login-btn">
+            Kembali ke Daftar Masuk
+        </button>
+
+        <div class="footer-links">
+            Sudah ada akaun? <a href="login.html">Daftar Masuk</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+        // Your Firebase config is correct
+        const firebaseConfig = {
+            apiKey: "AIzaSyD3iyKczmk97lG68Pthi_KyPlfY6ZxM9no",
+            authDomain: "abmath-galaxy-new.firebaseapp.com",
+            projectId: "abmath-galaxy-new",
+            storageBucket: "abmath-galaxy-new.appspot.com",
+            messagingSenderId: "163126177991",
+            appId: "1:163126177991:web:c0562ab5bf7a50c3538ee2",
+            measurementId: "G-NTK08W6GRV"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // --- Get DOM Elements ---
+        const emailInput = document.getElementById("email");
+        const passwordInput = document.getElementById("password");
+        const emailSignUpBtn = document.getElementById("email-signup-btn");
+        const googleSignUpBtn = document.getElementById("google-signup-btn");
+        const backToLoginBtn = document.getElementById("back-to-login-btn");
+        const togglePassword = document.getElementById("togglePassword");
+
+        // --- Event Listeners ---
+        emailSignUpBtn.addEventListener("click", async () => {
+            try {
+                await createUserWithEmailAndPassword(auth, emailInput.value, passwordInput.value);
+                alert("✅ Account created!");
+                window.location.href = "SelectProfile.html";
+            } catch (error) {
+                alert("❌ " + error.message);
+            }
+        });
+
+        googleSignUpBtn.addEventListener("click", async () => {
+            try {
+                const provider = new GoogleAuthProvider();
+                await signInWithPopup(auth, provider);
+                alert("✅ Account created with Google!");
+                window.location.href = "SelectProfile.html";
+            } catch (error) {
+                console.error(error);
+                alert("❌ " + error.message);
+            }
+        });
+
+        backToLoginBtn.addEventListener("click", () => {
+            window.location.href = 'login.html';
+        });
+
+        togglePassword.addEventListener("click", () => {
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+            togglePassword.textContent = type === "password" ? "👁" : "visibility_off"; // You can use a different icon for visibility off
+        });
+    </script>
+</body>
+</html>

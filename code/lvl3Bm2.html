@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AB Math Galaxy Word Game (BM Drag & Drop)</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to bottom, #1d4ed8, #9333ea);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Navigation Buttons */
+    .back-btn, .home-btn, .music-btn, .settings-btn {
+      position: absolute;
+      top: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2em;
+      color: white;
+      transition: background 0.2s ease;
+      z-index: 5;
+    }
+    .back-btn:hover, .home-btn:hover, .music-btn:hover, .settings-btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+    .back-btn { left: 70px; }
+    .home-btn { left: 20px; }
+    .music-btn { right: 20px; }
+    .settings-btn { right: 70px; }
+
+    /* Floating Decorations */
+    .floating-img { position: absolute; width: 80px; opacity: 0.9; z-index: 1; }
+    .rocket { top: 100px; left: 40px; }
+    .moon { top: 150px; right: 40px; }
+    .meteor { bottom: 100px; left: 60px; }
+    .astronaut { bottom: 120px; right: 60px; }
+
+    h1 { margin-top: 80px; font-size: 1.8em; text-align: center; z-index: 2; }
+
+.image-container {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 20px;
+  margin-top: 50px; /* was 80px — reduced to move up */
+  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+  backdrop-filter: blur(6px);
+  z-index: 2;
+  animation: popIn 0.8s ease;
+}
+
+.image-container img {
+  width: 130px;
+  height: auto;
+  animation: float 4s ease-in-out infinite;
+}
+    /* Dropzone */
+    .dropzone {
+      margin-top: 25px;
+      width: 250px;
+      height: 60px;
+      border: 2px dashed white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3em;
+      text-align: center;
+      transition: background 0.3s ease;
+      z-index: 2;
+    }
+
+    /* Choices */
+    .choices {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-top: 25px;
+      z-index: 2;
+    }
+    .choice {
+      width: 120px;
+      padding: 15px;
+      background: linear-gradient(to right, #f9d423, #ff4e50);
+      border-radius: 10px;
+      text-align: center;
+      cursor: grab;
+      user-select: none;
+      font-size: 1.2em;
+      font-weight: bold;
+      color: black;
+      box-shadow: 0px 0px 15px rgba(255,255,255,0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      z-index: 2;
+    }
+    .choice:hover {
+      transform: scale(1.1);
+      box-shadow: 0px 0px 25px rgba(255,255,255,0.7);
+    }
+
+    /* Messages */
+    #message {
+      margin-top: 20px;
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #00ffcc;
+      text-align: center;
+      display: none;
+      z-index: 3;
+    }
+    #wrong-message {
+      margin-top: 10px;
+      font-size: 1.3em;
+      color: #ff4e50;
+      text-align: center;
+      display: none;
+      z-index: 3;
+    }
+
+    /* Meteor Animation */
+    .meteor {
+      position: absolute;
+      top: -100px;
+      width: 80px;
+      height: 80px;
+      background: url('meteor.png') no-repeat center/contain;
+      opacity: 0;
+      pointer-events: none;
+    }
+    @keyframes diagonalFallRightToLeft {
+      0% { transform: translate(0, 0); opacity: 1; }
+      100% { transform: translate(-100vw, 110vh); opacity: 0; }
+    }
+    /* Floating Decorations */
+    .floating-img {
+      position: absolute;
+      width: 80px;
+      opacity: 0.9;
+      z-index: 1;
+    }
+    .rocket { top: 100px; left: 40px; animation: flyAcross 15s linear infinite; }
+    .moon { top: 150px; right: 40px; animation: float 6s ease-in-out infinite; }
+    .astronaut { bottom: 120px; right: 60px; animation: float 5s ease-in-out infinite; }
+    .alien { bottom: 50px; left: 50px; animation: float 4s ease-in-out infinite; }
+    .comet { top: 30px; right: -100px; animation: flyAcross 12s linear infinite reverse; }
+
+    /* Stars */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out alternate;
+      z-index: 0;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.3; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.5); }
+    }
+
+    /* Floating Animations */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes flyAcross {
+      0% { transform: translateX(-200px) rotate(10deg); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }
+    }
+  </style>
+</head>
+<script src="audioControl.js" defer></script>
+<body>
+  <!-- Navigation Buttons -->
+  <button class="settings-btn" onclick=" window.location.href='settings.html'">&#9881;</button>
+  <button class="back-btn" onclick="window.location.href='selectLvl.html'">&#8592;</button>
+  <button class="home-btn" onclick="window.location.href='homepage.html'" title="Home">🏠</button>
+  <button class="music-btn" onclick="toggleMusic()" title="Toggle Music">🔊</button>
+
+  <!-- Floating Images -->
+  <img src="roket.png" alt="rocket" class="floating-img rocket">
+  <img src="moon.png" alt="moon" class="floating-img moon">
+  <img src="rocket.png" alt="astronaut" class="floating-img astronaut">
+  <img src="planet.png" alt="alien" class="floating-img alien">
+  <img src="rocket.png" alt="comet" class="floating-img comet">
+
+  <!-- Question -->
+  <h1>Pilih Perkataan Yang Betul Bagi Gambar di Bawah</h1>
+  <div class="image-container">
+    <img src="burung.png" alt="Burung">
+  </div>
+
+  <!-- Dropzone -->
+  <div class="dropzone" id="dropzone">Letakkan jawapan di sini</div>
+
+  <!-- Choices -->
+  <div class="choices">
+    <div class="choice" draggable="true" data-answer="1">Bangau</div>
+    <div class="choice" draggable="true" data-answer="2">Burung</div>
+    <div class="choice" draggable="true" data-answer="3">Ayam</div>
+    <div class="choice" draggable="true" data-answer="4">Berenang</div>
+  </div>
+
+  <!-- Messages -->
+  <div id="message">✅ Tahniah! Jawapan anda betul</div>
+  <div id="wrong-message">❌ Jawapan salah! Cuba lagi.</div>
+
+  <!-- Background Music -->
+  <audio id="bg-music" autoplay loop>
+    <source src="bgMusic.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Flying Meteors -->
+  <div class="meteor"></div>
+  <div class="meteor"></div>
+  <div class="meteor"></div>
+  <audio id="meteor-sound" src="whoosh.mp3"></audio>
+
+  <!-- Drag and Drop using quizLogic.js -->
+  <script type="module" src="quizLogic.js"></script>
+  <script>
+    const dropzone = document.getElementById('dropzone');
+    const choices = document.querySelectorAll('.choice');
+
+    choices.forEach(choice => {
+      choice.addEventListener('dragstart', e => {
+        e.dataTransfer.setData('text', choice.dataset.answer + "|" + choice.textContent);
+      });
+    });
+
+    dropzone.addEventListener('dragover', e => e.preventDefault());
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault();
+      const data = e.dataTransfer.getData('text').split('|');
+      const selectedAnswer = data[0]; // number of the answer
+      // Correct answer is 2 for "Burung"
+      window.checkAnswer(dropzone, selectedAnswer, "2");
+    });
+
+  // ======== Music toggle & persistence across all pages ========
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  
+  if (music.paused) {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicState', 'playing');
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicState', 'muted');
+  }
+}
+
+// When leaving the page, save the time
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+// When page loads, restore the state
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicState = localStorage.getItem('musicState');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+
+  if (musicState === 'muted') {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+    // Meteor animation
+    const meteors = document.querySelectorAll('.meteor');
+    const meteorSound = document.getElementById('meteor-sound');
+    function launchMeteor(meteor) {
+      const delay = Math.random() * 4000 + 2000;
+      const startX = window.innerWidth - Math.random() * (window.innerWidth / 2);
+      const startY = Math.random() * -200;
+      meteor.style.left = `${startX}px`;
+      meteor.style.top = `${startY}px`;
+      setTimeout(() => {
+        meteor.style.animation = `diagonalFallRightToLeft 3s linear`;
+        meteorSound.currentTime = 0;
+        if (localStorage.getItem('effectsEnabled') !== 'false') meteorSound.play();
+        setTimeout(() => {
+          meteor.style.animation = '';
+          launchMeteor(meteor);
+        }, 3000);
+      }, delay);
+    }
+    meteors.forEach(meteor => launchMeteor(meteor));
+    // --- Stars ---
+for(let i=0;i<60;i++){
+  const star=document.createElement('div');
+  star.classList.add('star');
+  star.style.top=Math.random()*100+'vh';
+  star.style.left=Math.random()*100+'vw';
+  star.style.animationDuration=(2+Math.random()*2)+'s';
+  document.body.appendChild(star);
+}
+  </script>
+</body>
+</html>

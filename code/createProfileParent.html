@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABMath Galaxy - Cipta Profil Ibu Bapa</title>
+<style>
+  body {
+    margin: 0; padding: 0;
+    font-family: 'Poppins', sans-serif;
+    height: 100vh; overflow: hidden;
+    background: radial-gradient(circle at top, #1d4ed8 20%, #9333ea 80%);
+    color: white; display: flex; justify-content: center; align-items: center;
+  }
+  .center { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+  .container {
+    background: rgba(255,255,255,0.1); backdrop-filter: blur(10px);
+    padding: 25px; border-radius: 20px;
+    width: 90%; max-width: 400px; text-align: center; box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  }
+  h1 { text-shadow: 2px 2px 10px #00f2ff; margin-bottom: 15px; }
+  input, select {
+    width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px;
+    border: none; font-size: 1em;
+  }
+  button {
+    padding: 12px 20px; border: none; border-radius: 15px; cursor: pointer;
+    font-weight: bold; color: white; background: linear-gradient(to right, #3b82f6, #9333ea);
+    transition: all 0.3s ease; margin-top: 10px;
+  }
+  button:hover { transform: scale(1.05); background: linear-gradient(to right, #9333ea, #00f2ff); }
+  .back-btn {
+    position: absolute; top: 20px; left: 20px;
+    background: rgba(255,255,255,0.2); border: none; border-radius: 50%;
+    width: 40px; height: 40px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:1.2em; color:white; transition: background 0.2s ease; z-index:5;
+  }
+  .back-btn:hover { background: rgba(255,255,255,0.4); }
+  .child-row { display:flex; gap:10px; align-items:center; margin-bottom:10px; }
+  .child-row input { flex:1; margin:0; }
+  .remove-child { background:red; font-size:0.9em; padding:5px 10px; border-radius:10px; }
+  .profile-picture {
+    width: 100px; height: 100px; border-radius: 50%;
+    background: rgba(255,255,255,0.15); margin: 0 auto 12px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25); border: 2px solid rgba(255,255,255,0.4);
+    overflow:hidden; font-size:50px;
+  }
+  .profile-picture img { width:100%; height:100%; object-fit:cover; }
+</style>
+</head>
+<body>
+
+<button class="back-btn" onclick="window.history.back()">&#8592;</button>
+<div class="center">
+  <div class="container">
+    <h1>Cipta Profil Ibu Bapa</h1>
+
+    <div class="profile-picture" id="profilePic">👤</div>
+
+    <input type="text" id="name" placeholder="Nama Penuh">
+    <input type="text" id="relationship" placeholder="Hubungan (cth: Ibu, Bapa)">
+    <select id="gender" onchange="updateAvatar()">
+      <option value="">Pilih Jantina</option>
+      <option value="male">Lelaki</option>
+      <option value="female">Perempuan</option>
+    </select>
+
+    <div id="childrenContainer">
+      <div class="child-row">
+        <input type="text" placeholder="Nama Anak">
+        <button class="remove-child" onclick="removeChild(this)">X</button>
+      </div>
+    </div>
+
+    <button onclick="addChild()">+ Tambah Anak</button>
+    <button onclick="createParentProfile()">Simpan Profil</button>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD3iyKczmk97lG68Pthi_KyPlfY6ZxM9no",
+  authDomain: "abmath-galaxy-new.firebaseapp.com",
+  projectId: "abmath-galaxy-new",
+  storageBucket: "abmath-galaxy-new.appspot.com",
+  messagingSenderId: "163126177991",
+  appId: "1:163126177991:web:c0562ab5bf7a50c3538ee2"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let currentUser = null;
+onAuthStateChanged(auth, (user)=>{
+  if(!user) window.location.href="login.html";
+  currentUser = user;
+});
+
+// Avatar logic
+const profilePic = document.getElementById('profilePic');
+function updateAvatar() {
+  const gender = document.getElementById('gender').value;
+  profilePic.innerHTML = "";
+  let imgUrl = '';
+  if(gender === "male") imgUrl = "maleAvatar.png";
+  else if(gender === "female") imgUrl = "femaleAvatar.png";
+
+  if(imgUrl){
+    const img = document.createElement('img');
+    img.src = imgUrl;
+    profilePic.appendChild(img);
+  } else {
+    profilePic.textContent = "👤";
+  }
+}
+
+// Add new child input row
+window.addChild = function() {
+  const container = document.getElementById('childrenContainer');
+  const div = document.createElement('div');
+  div.classList.add('child-row');
+  div.innerHTML = `<input type="text" placeholder="Nama Anak">
+                   <button class="remove-child" onclick="removeChild(this)">X</button>`;
+  container.appendChild(div);
+}
+
+// Remove a child row
+window.removeChild = function(btn) {
+  btn.parentElement.remove();
+}
+
+// Save parent profile
+window.createParentProfile = async function() {
+  const name = document.getElementById('name').value.trim();
+  const relationship = document.getElementById('relationship').value.trim();
+  const gender = document.getElementById('gender').value;
+  const childInputs = document.querySelectorAll('#childrenContainer input');
+  const children = [];
+  childInputs.forEach(input => {
+    const val = input.value.trim();
+    if(val) children.push({ name: val });
+  });
+
+  if(!name || !relationship || !gender || children.length === 0) 
+    return alert("Sila lengkapkan semua medan termasuk jantina dan sekurang-kurangnya satu anak.");
+
+  try {
+    const docRef = doc(db, "users", currentUser.uid);
+    const docSnap = await getDoc(docRef);
+
+    await setDoc(docRef, {
+      ...docSnap.data(),
+      name,
+      relationship,
+      role: "parent",
+      gender,
+      avatar: gender === "male" ? "maleAvatar.png" : "femaleAvatar.png",
+      children,
+      stats: { reportsViewed: 0, messagesSent: 0 }
+    }, { merge:true });
+
+    window.location.href = "parentDashboard.html";
+  } catch(err) {
+    console.error(err);
+    alert("Gagal menyimpan profil ibu bapa.");
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ABMath Galaxy - Daftar Masuk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            background: linear-gradient(to right, #9333ea, #1d4ed8); 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start; 
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-container {
+            background-color: white;
+            border-radius: 30px; 
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 90%; 
+            max-width: 360px; 
+            padding: 25px;
+            text-align: center;
+            margin-top: 25vh; 
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .card-container h2 {
+            color: #333; 
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            width: 100%;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        
+        .input-group label {
+            display: block;
+            color: #555;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            padding: 12px 15px;
+            padding-right: 40px; 
+            border: 1px solid #ddd;
+            border-radius: 12px; 
+            font-size: 1em;
+            color: #333;
+            box-sizing: border-box;
+        }
+
+        .input-wrapper input::placeholder {
+            color: #aaa;
+        }
+
+        .input-wrapper .icon {
+            position: absolute;
+            right: 15px;
+            color: #aaa;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 25px; 
+            background: linear-gradient(to right, #00f260, #0575e6); 
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            box-shadow: 0 4px 10px rgba(0, 242, 96, 0.3); 
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 242, 96, 0.4);
+        }
+
+        .btn-google {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid #ddd; 
+            border-radius: 25px;
+            background-color: white;
+            color: #555;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-google img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .btn-google:hover {
+            background-color: #f5f5f5;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            margin: 20px 0;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #eee;
+        }
+
+        .divider:not(:empty)::before {
+            margin-right: .25em;
+        }
+
+        .divider:not(:empty)::after {
+            margin-left: .25em;
+        }
+
+        .footer-links {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #555;
+        }
+
+        .footer-links a {
+            color: #0575e6;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: #004d9c;
+        }
+
+        /* --- HEADER ICON (Centered, Bigger) --- */
+        .header-content {
+            position: absolute;
+            top: 5vh; 
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 5; 
+        }
+
+        .header-content img {
+            width: 350px;
+            height: 150px;
+            object-fit: contain;
+        }
+
+        .icon-floating {
+            position: absolute;
+            z-index: 3;
+            animation: float 4s ease-in-out infinite;
+        }
+        .top-right-planet { top: 30px; right: 30px; width: 100px; }
+        .bottom-left-meteor { bottom: 30px; left: 30px; width: 90px; }
+        .center-planet-large { 
+    position: absolute;
+    top: 10%;        /* move to top */
+    left: 0;         /* move to left */
+    transform: translate(0, 0); /* no translation */
+    width: 200px;    /* slightly smaller */
+    opacity: 0.3; 
+    z-index: 1;      /* behind card */
+    animation: spin 30s linear infinite;
+}
+
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <img src="planet.png" alt="Planet" class="icon-floating top-right-planet">
+    <img src="meteor.png" alt="Meteor" class="icon-floating bottom-left-meteor">
+    <img src="planet.png" alt="Big Planet" class="center-planet-large">
+
+    <div class="header-content">
+        <img src="icon.png" alt="App Icon">
+    </div>
+
+    <div class="card-container">
+        <h2>Daftar Masuk</h2>
+
+        <div class="input-group">
+            <label for="email">Email</label>
+            <div class="input-wrapper">
+                <input type="email" id="email" placeholder="Masukkan email anda">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="password">Kata Laluan</label>
+            <div class="input-wrapper">
+                <input type="password" id="password" placeholder="Masukkan kata laluan">
+                <span class="icon" id="togglePassword">👁</span>
+            </div>
+        </div>
+
+        <button class="btn-primary" onclick="signInEmail()">Daftar Masuk</button>
+
+        <div class="divider">ATAU</div>
+
+        <button class="btn-google" onclick="signInWithGoogle()">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png" alt="Google icon">
+            Daftar Masuk menggunakan Google
+        </button>
+        
+        <div class="footer-links">
+            Belum ada akaun? <a href="create account.html">Cipta Akaun</a>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-auth-compat.js"></script>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyD3iyKczmk97lG68Pthi_KyPlfY6ZxM9no",
+    authDomain: "abmath-galaxy-new.firebaseapp.com",
+    projectId: "abmath-galaxy-new",
+    storageBucket: "abmath-galaxy-new.appspot.com", // ✅ fixed
+    messagingSenderId: "163126177991",
+    appId: "1:163126177991:web:c0562ab5bf7a50c3538ee2",
+    measurementId: "G-NTK08W6GRV"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  console.log("✅ Firebase initialized:", firebase.apps.length);
+  const auth = firebase.auth();
+
+  function signInEmail() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+
+    auth.signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        alert("✅ Logged in successfully!");
+        console.log("User:", user.email);
+        window.location.href = "SelectProfile.html"; 
+      })
+      .catch((error) => {
+        alert("❌ " + error.message);
+        console.error(error);
+      });
+  }
+
+  function signInWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        alert("✅ Successfully signed in with Google!");
+        console.log("Google user:", result.user.email);
+        window.location.href = "SelectProfile.html";
+      })
+      .catch((error) => {
+        alert("❌ " + error.message);
+        console.error(error);
+      });
+  }
+
+  // Toggle password visibility
+  const passwordInput = document.getElementById("password");
+  const togglePassword = document.getElementById("togglePassword");
+  
+  if (togglePassword) {
+    togglePassword.addEventListener("click", () => {
+      const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+      passwordInput.setAttribute("type", type);
+      togglePassword.textContent = type === "password" ? "👁" : "🙈";
+    });
+  }
+</script>
+
+</body>
+</html>

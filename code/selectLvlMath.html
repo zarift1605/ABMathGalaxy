@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pilih Tahap Matematik</title>
+  <style>
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      color: white;
+      background: radial-gradient(circle at bottom, #1d4ed8 10%, #3b82f6 40%, #9333ea 100%);
+      text-align: center;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px; height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out alternate;
+      z-index: 0;
+    }
+
+    @keyframes twinkle {
+      from { opacity: 0.3; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.5); }
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+
+    @keyframes flyAcross {
+      0% { transform: translateX(-200px) rotate(10deg); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }
+    }
+
+    img.icon { position: absolute; width: 100px; opacity: 0.9; z-index: 1; }
+    .rocket { top: 150px; left: -150px; animation: flyAcross 18s linear infinite; }
+    .astronaut { bottom: 100px; right: 40px; animation: float 6s ease-in-out infinite; }
+    .planet { bottom: 30px; left: 40px; animation: float 5s ease-in-out infinite; }
+
+    .center {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%; position: relative; z-index: 5;
+    }
+
+    .center-image { width: 180px; animation: float 4s ease-in-out infinite; }
+
+    h1 {
+      font-size: 2.4em; margin: 15px 0 20px;
+      text-shadow: 2px 2px 10px #00f2ff;
+      animation: fadeInDown 1.5s ease-out;
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .level-btn {
+      margin: 8px; padding: 15px 45px;
+      font-size: 1.4em; font-weight: bold;
+      color: white;
+      background: linear-gradient(to right, #00f260, #0575e6);
+      border: none; border-radius: 12px;
+      cursor: pointer; box-shadow: 0 0 15px #00f260;
+      transition: all 0.3s ease;
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .level-btn:hover:not(.locked) {
+      transform: scale(1.1);
+      background: linear-gradient(to right, #00f2ff, #9333ea);
+      box-shadow: 0 0 25px #a7f3d0;
+    }
+
+    .level-btn.locked {
+      background: gray; cursor: not-allowed; box-shadow: none;
+    }
+
+    /* ✅ Completed style */
+    .level-btn.completed {
+      background: linear-gradient(to right, #22c55e, #16a34a);
+      box-shadow: 0 0 20px #22c55e;
+      color: #fff;
+    }
+    .settings-btn, .back-btn, .music-btn {
+      position: absolute; top: 20px;
+      background: rgba(255,255,255,0.2);
+      border: none; border-radius: 50%;
+      width: 45px; height: 45px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1.2em;
+      color: white; transition: background 0.3s ease;
+      z-index: 10;
+    }
+
+    .settings-btn:hover, .back-btn:hover, .music-btn:hover {
+      background: rgba(255,255,255,0.4);
+    }
+
+    .settings-btn { right: 70px; }
+    .music-btn { right: 20px; }
+    .back-btn { left: 20px; }
+
+    .falling-meteor {
+      position: absolute; top: -100px;
+      width: 80px; height: 80px;
+      background: url('meteor.png') no-repeat center/contain;
+      opacity: 0; pointer-events: none; z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <!-- Buttons -->
+  <button class="back-btn" onclick="window.location.href='selectActivityMath.html'">←</button>
+  <button class="settings-btn" onclick="window.location.href='settings.html'">⚙️</button>
+  <button class="music-btn" onclick="toggleMusic()">🔊</button>
+
+  <!-- Floating icons -->
+  <img src="roket.png" class="icon rocket">
+  <img src="rocket.png" class="icon astronaut">
+  <img src="roket.png" class="icon planet">
+
+  <script>
+    for (let i=0; i<60; i++){
+      const s=document.createElement('div');
+      s.classList.add('star');
+      s.style.top=Math.random()*100+'vh';
+      s.style.left=Math.random()*100+'vw';
+      s.style.animationDuration=2+Math.random()*2+'s';
+      document.body.appendChild(s);
+    }
+  </script>
+
+  <div class="center">
+    <img src="planet.png" class="center-image">
+    <h1>Pilih Tahap Matematik</h1>
+
+    <button class="level-btn" id="level1" onclick="startLevel(1)">Tahap 1</button>
+    <button class="level-btn" id="level2" onclick="startLevel(2)">Tahap 2 🔒</button>
+    <button class="level-btn" id="level3" onclick="startLevel(3)">Tahap 3 🔒</button>
+    <button class="level-btn" id="level4" onclick="startLevel(4)">Tahap 4 🔒</button>
+    <button class="level-btn" id="level5" onclick="startLevel(5)">Tahap 5 🔒</button>
+
+    <button class="level-btn" style="background:red; box-shadow:none;" onclick="resetProgress()">Tetapkan Semula Kemajuan</button>
+  </div>
+
+  <audio id="bg-music" autoplay loop><source src="bgMusic.mp3" type="audio/mpeg"></audio>
+  <audio id="click-sound"><source src="click.mp3" type="audio/mpeg"></audio>
+
+  <div class="falling-meteor"></div>
+  <div class="falling-meteor"></div>
+  <div class="falling-meteor"></div>
+
+  <script>
+    const totalLevels = 5;
+    const music = document.getElementById('bg-music');
+    const clickSound = document.getElementById('click-sound');
+    const musicBtn = document.querySelector('.music-btn');
+
+    function playClick(){ clickSound.currentTime=0; clickSound.play(); }
+   // ======== Music toggle & persistence across all pages ========
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  
+  if (music.paused) {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicState', 'playing');
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicState', 'muted');
+  }
+}
+
+// When leaving the page, save the time
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+// When page loads, restore the state
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicState = localStorage.getItem('musicState');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+
+  if (musicState === 'muted') {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+
+
+    function updateLevelLocks(){
+      const highestUnlocked = parseInt(localStorage.getItem('highestUnlockedMath') || '1');
+      for(let i=1;i<=totalLevels;i++){
+        const btn=document.getElementById(`level${i}`);
+        const isCompleted=localStorage.getItem(`mathLevel${i}_completed`)==='true';
+        if(i<=highestUnlocked){ btn.classList.remove('locked'); btn.disabled=false; btn.textContent=`Tahap ${i}`; }
+        else{ btn.classList.add('locked'); btn.disabled=true; btn.textContent=`Tahap ${i} 🔒`; }
+        if(isCompleted){ btn.classList.add('completed'); }
+      }
+    }
+
+    function startLevel(level){
+      playClick();
+      const btn=document.getElementById(`level${level}`);
+      if(btn.classList.contains('locked')){ alert('Selesaikan tahap sebelumnya untuk membuka tahap ini!'); return; }
+
+      const questionSets={
+        1:['lvl1Math.html','lvl1Math2.html','lvl1Math3.html','lvl1Math4.html'],
+        2:['lvl2Math.html','lvl2Math2.html','lvl2Math3.html','lvl2Math4.html'],
+        3:['lvl3Math.html','lvl3Math2.html','lvl3Math3.html','lvl3Math4.html'],
+        4:['lvl4Math.html','lvl4Math2.html','lvl4Math3.html','lvl4Math4.html'],
+        5:['lvl5Math.html','lvl5Math2.html','lvl5Math3.html','lvl5Math4.html']
+      };
+
+      let questions=questionSets[level];
+      if(!questions){ alert('Tahap tidak dijumpai!'); return; }
+
+      for(let i=questions.length-1;i>0;i--){
+        const j=Math.floor(Math.random()*(i+1));
+        [questions[i],questions[j]]=[questions[j],questions[i]];
+      }
+
+      localStorage.setItem(`mathLevel${level}Questions`,JSON.stringify(questions));
+      localStorage.setItem(`usedMathLevel${level}`,JSON.stringify([]));
+      window.location.href=questions[0];
+    }
+
+    function goToNextQuestion(){
+      const currentPath=window.location.pathname.split('/').pop();
+      const match=currentPath.match(/lvl(\d+)Math/i);
+      if(!match) return;
+      const levelNumber=parseInt(match[1]);
+      let questions=JSON.parse(localStorage.getItem(`mathLevel${levelNumber}Questions`))||[];
+      let used=JSON.parse(localStorage.getItem(`usedMathLevel${levelNumber}`))||[];
+      if(!used.includes(currentPath)) used.push(currentPath);
+      localStorage.setItem(`usedMathLevel${levelNumber}`,JSON.stringify(used));
+      const nextQ=questions.find(q=>!used.includes(q));
+
+      if(nextQ){ window.location.href=nextQ; }
+      else{
+        alert("Tahniah! Anda telah menamatkan semua soalan bagi tahap ini!");
+        localStorage.setItem(`mathLevel${levelNumber}_completed`,'true');
+        let highestUnlocked=parseInt(localStorage.getItem('highestUnlockedMath')||'1');
+        if(levelNumber===highestUnlocked && highestUnlocked<totalLevels){
+          localStorage.setItem('highestUnlockedMath',highestUnlocked+1);
+        }
+        window.location.href='selectLvlMath.html';
+      }
+    }
+
+    function resetProgress(){
+      if(!confirm("Adakah anda pasti mahu menetapkan semula semua tahap?")) return;
+      playClick();
+      localStorage.setItem('highestUnlockedMath','1');
+      for(let i=1;i<=totalLevels;i++){
+        localStorage.removeItem(`mathLevel${i}Questions`);
+        localStorage.removeItem(`usedMathLevel${i}`);
+        localStorage.removeItem(`mathLevel${i}_completed`);
+      }
+      updateLevelLocks();
+      alert('Semua tahap telah dikunci semula! Tahap 1 kini dibuka.');
+    }
+
+    // Music restore
+    window.addEventListener('load',()=>{
+      updateLevelLocks();
+      const musicEnabled=localStorage.getItem('musicEnabled')!=='false';
+      if(!musicEnabled){ music.pause(); musicBtn.textContent='🔇'; }
+      else{ music.play(); musicBtn.textContent='🔊'; }
+      const savedTime=localStorage.getItem('bgMusicTime');
+      if(savedTime) music.currentTime=parseFloat(savedTime);
+    });
+    window.addEventListener('beforeunload',()=>localStorage.setItem('bgMusicTime',music.currentTime));
+
+    document.querySelectorAll('button').forEach(b=>b.addEventListener('click',playClick));
+  </script>
+</body>
+</html>

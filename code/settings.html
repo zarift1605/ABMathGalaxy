@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings - ABMath Galaxy</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        height: 100vh;
+        background: radial-gradient(circle at bottom, #1d4ed8 10%, #3b82f6 40%, #9333ea 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: white;
+        position: relative;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: white;
+        border-radius: 50%;
+        opacity: 0.8;
+        animation: twinkle 2s infinite ease-in-out alternate;
+    }
+
+    @keyframes twinkle {
+        from { opacity: 0.3; transform: scale(1); }
+        to { opacity: 1; transform: scale(1.5); }
+    }
+
+    .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.2em;
+        color: white;
+        transition: background 0.2s ease;
+        z-index: 5;
+    }
+    .back-btn:hover { background: rgba(255, 255, 255, 0.4); }
+
+    .settings-container {
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 20px;
+        margin-top: 60px;
+        width: 80%;
+        max-width: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        position: relative;
+        z-index: 3;
+        backdrop-filter: blur(10px);
+    }
+
+    .settings-btn {
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        border-radius: 15px;
+        padding: 12px;
+        margin: 10px 0;
+        font-size: 1em;
+        color: white;
+        cursor: pointer;
+        text-align: left;
+        transition: background 0.2s ease, transform 0.2s ease;
+    }
+    .settings-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: scale(1.03);
+    }
+
+    .logout-btn {
+        background: linear-gradient(to right, #00f260, #0575e6);
+        border: none;
+        border-radius: 25px;
+        padding: 12px;
+        margin-top: 20px;
+        font-size: 1em;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+    .logout-btn:hover { transform: scale(1.05); }
+
+    img.icon {
+        position: absolute;
+        width: 80px;
+        opacity: 0.9;
+        z-index: 2;
+    }
+
+    .rocket { top: 150px; left: -150px; animation: flyAcross 15s linear infinite; }
+    .comet { top: 50px; right: -100px; animation: flyAcross 12s linear infinite reverse; }
+
+    @keyframes flyAcross {
+        0% { transform: translateX(-200px) rotate(10deg); opacity: 0; }
+        50% { opacity: 1; }
+        100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }
+    }
+</style>
+</head>
+<body>
+
+<!-- 🌠 Flying Images -->
+<img src="rocket.png" class="icon rocket" alt="Rocket">
+<img src="comet.png" class="icon comet" alt="Comet">
+
+<!-- Back button -->
+<button class="back-btn" onclick="window.history.back()">&#8592;</button>
+
+<!-- Settings Menu -->
+<div class="settings-container">
+    <button class="settings-btn" onclick="window.location.href='editProfile.html'">KEMASKINI PROFIL →</button>
+    <button class="settings-btn" onclick="window.location.href='soundSettings.html'">TETAPAN BUNYI</button>
+    <button class="settings-btn" onclick="window.location.href='FrequentAQ.html'">SOALAN LAZIM (FAQ)</button>
+    <button class="logout-btn" id="homeButton">Kembali ke Laman Utama</button>
+    <button class="logout-btn"onclick="window.location.href='login.html'">Log Keluar</button>
+</div>
+
+<!-- Background Music -->
+<audio id="bg-music" autoplay loop>
+    <source src="bgMusic.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<script type="module">
+/* ================= FIREBASE CONNECTION ================= */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD3iyKczmk97lG68Pthi_KyPlfY6ZxM9no",
+  authDomain: "abmath-galaxy-new.firebaseapp.com",
+  projectId: "abmath-galaxy-new",
+  storageBucket: "abmath-galaxy-new.appspot.com",
+  messagingSenderId: "163126177991",
+  appId: "1:163126177991:web:c0562ab5bf7a50c3538ee2"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* ================= DETECT USER ROLE AND REDIRECT ================= */
+onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+        const data = userSnap.data();
+        const role = data.role;
+
+        document.getElementById("homeButton").addEventListener("click", () => {
+            if (role === "student") {
+                window.location.href = "homepage.html";
+            } else if (role === "teacher") {
+                window.location.href = "teacherDashboard.html";
+            } else if (role === "parent") {
+                window.location.href = "parentDashboard.html";
+            } else {
+                window.location.href = "homepage.html";
+            }
+        });
+    }
+});
+
+/* ================= LOGOUT HANDLER ================= */
+function logout() {
+    signOut(auth).then(() => {
+        window.location.href = "login.html";
+    }).catch((error) => {
+        alert("Error logging out: " + error.message);
+    });
+}
+</script>
+
+<script>
+/* ================= BACKGROUND MUSIC & STARS ================= */
+for (let i = 0; i < 60; i++) {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    star.style.top = Math.random() * 100 + 'vh';
+    star.style.left = Math.random() * 100 + 'vw';
+    star.style.width = star.style.height = (1 + Math.random() * 2) + 'px';
+    star.style.opacity = 0.3 + Math.random() * 0.7;
+    star.style.animationDuration = 2 + Math.random() * 2 + 's';
+    document.body.appendChild(star);
+}
+
+const music = document.getElementById('bg-music');
+
+window.addEventListener('load', () => {
+    const savedTime = localStorage.getItem('bgMusicTime');
+    if (savedTime) music.currentTime = parseFloat(savedTime);
+    music.play();
+
+    const savedVolume = localStorage.getItem('volumeLevel');
+    if (savedVolume !== null) music.volume = savedVolume / 100;
+
+    const musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
+    if (!musicEnabled) music.pause();
+});
+
+window.addEventListener('beforeunload', () => {
+    localStorage.setItem('bgMusicTime', music.currentTime);
+});
+// ======== Music toggle & persistence across all pages ========
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  
+  if (music.paused) {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicState', 'playing');
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicState', 'muted');
+  }
+}
+
+// When leaving the page, save the time
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+// When page loads, restore the state
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicState = localStorage.getItem('musicState');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+
+  if (musicState === 'muted') {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+
+</script>
+
+</body>
+</html>

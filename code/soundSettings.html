@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sound Settings - ABMath Galaxy</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Poppins', sans-serif;
+        background: linear-gradient(to right, #1d4ed8, #9333ea);
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        position: relative;
+    }
+    .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.2em;
+        color: white;
+    }
+    .sound-container {
+        margin-top: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 20px;
+        width: 80%;
+        max-width: 320px;
+        text-align: center;
+    }
+    input[type="range"] {
+        width: 100%;
+    }
+    .music-btn {
+        margin-top: 10px;
+        font-size: 1.5em;
+        background: none;
+        border: none;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+</head>
+<script src="audioControl.js" defer></script>
+<body>
+
+<!-- Background Music -->
+<audio id="bg-music" autoplay loop>
+    <source src="bgMusic.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
+</audio>
+
+<!-- Sound Effect -->
+<audio id="pop-sound" src="pop.mp3"></audio>
+
+<button class="back-btn" onclick="window.location.href='settings.html'">&#8592;</button>
+
+<div class="sound-container">
+    <h2>Sound Settings</h2>
+    <label>
+        <input type="checkbox" id="sound-effects" checked> Membolehkan suara sampingan
+    </label>
+    <br>    
+    <label>
+        <input type="checkbox" id="background-music" checked> Membolehkan suara latar belakang
+    </label>
+    <p>Volume</p>
+    <input type="range" id="volume-control" min="0" max="100" value="70">
+    <button class="music-btn" onclick="toggleMusic()">🔊</button>
+</div>
+
+<script>
+    const bgMusic = document.getElementById('bg-music');
+    const popSound = document.getElementById('pop-sound');
+    const volumeSlider = document.getElementById('volume-control');
+    const musicToggle = document.getElementById('background-music');
+    const effectsToggle = document.getElementById('sound-effects');
+
+    // --- STEP 1: Apply saved settings ---
+    window.addEventListener('load', () => {
+        // Restore volume
+        const savedVolume = localStorage.getItem('volumeLevel');
+        if (savedVolume !== null) {
+            volumeSlider.value = savedVolume;
+            bgMusic.volume = savedVolume / 100;
+            popSound.volume = savedVolume / 100;
+        }
+
+        // Restore sound/music toggles
+        const musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
+        const effectsEnabled = localStorage.getItem('effectsEnabled') !== 'false';
+        musicToggle.checked = musicEnabled;
+        effectsToggle.checked = effectsEnabled;
+
+        if (!musicEnabled) bgMusic.pause();
+        if (effectsEnabled) popSound.volume = volumeSlider.value / 100;
+
+        // Restore playback time
+        const savedTime = localStorage.getItem('bgMusicTime');
+        if (savedTime) bgMusic.currentTime = parseFloat(savedTime);
+        if (musicEnabled) bgMusic.play();
+    });
+
+    // --- STEP 2: Save playback time ---
+    window.addEventListener('beforeunload', () => {
+        localStorage.setItem('bgMusicTime', bgMusic.currentTime);
+    });
+
+    // --- STEP 3: Volume control ---
+    volumeSlider.addEventListener('input', () => {
+        const volume = volumeSlider.value / 100;
+        bgMusic.volume = volume;
+        popSound.volume = volume;
+        localStorage.setItem('volumeLevel', volumeSlider.value);
+    });
+
+    // --- STEP 4: Music toggle ---
+    function toggleMusic() {
+        const btn = document.querySelector('.music-btn');
+        if (bgMusic.paused) {
+            bgMusic.play();
+            musicToggle.checked = true;
+            localStorage.setItem('musicEnabled', true);
+            btn.textContent = '🔊';
+        } else {
+            bgMusic.pause();
+            musicToggle.checked = false;
+            localStorage.setItem('musicEnabled', false);
+            btn.textContent = '🔇';
+        }
+    }
+
+    // --- STEP 5: Checkbox listeners ---
+    musicToggle.addEventListener('change', () => {
+        if (musicToggle.checked) {
+            bgMusic.play();
+            localStorage.setItem('musicEnabled', true);
+        } else {
+            bgMusic.pause();
+            localStorage.setItem('musicEnabled', false);
+        }
+    });
+
+    effectsToggle.addEventListener('change', () => {
+        localStorage.setItem('effectsEnabled', effectsToggle.checked);
+    });
+    window.addEventListener('load', () => {
+    const music = document.getElementById('bg-music');
+    const btn = document.querySelector('.music-btn');
+    const savedTime = localStorage.getItem('bgMusicTime');
+    const musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
+
+    if (savedTime) music.currentTime = parseFloat(savedTime);
+
+    if (!musicEnabled) {
+        music.pause();
+        btn.textContent = '🔇';
+    } else {
+        music.play();
+        btn.textContent = '🔊';
+    }
+
+    // Restore volume
+    const savedVolume = localStorage.getItem('volumeLevel');
+    if (savedVolume !== null) {
+        music.volume = savedVolume / 100;
+    }
+});
+
+window.addEventListener('beforeunload', () => {
+    const music = document.getElementById('bg-music');
+    localStorage.setItem('bgMusicTime', music.currentTime);
+});
+window.addEventListener('load', () => {
+    const music = document.getElementById('bg-music');
+    const btn = document.querySelector('.music-btn');
+    const savedTime = localStorage.getItem('bgMusicTime');
+    const musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
+
+    if (savedTime) music.currentTime = parseFloat(savedTime);
+
+    if (!musicEnabled) {
+        music.pause();
+        btn.textContent = '🔇';
+    } else {
+        music.play();
+        btn.textContent = '🔊';
+    }
+
+    // Restore volume
+    const savedVolume = localStorage.getItem('volumeLevel');
+    if (savedVolume !== null) {
+        music.volume = savedVolume / 100;
+    }
+});
+
+window.addEventListener('beforeunload', () => {
+    const music = document.getElementById('bg-music');
+    localStorage.setItem('bgMusicTime', music.currentTime);
+});
+// ======== Music toggle & persistence across all pages ========
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  
+  if (music.paused) {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicState', 'playing');
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicState', 'muted');
+  }
+}
+
+// When leaving the page, save the time
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+// When page loads, restore the state
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicState = localStorage.getItem('musicState');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+
+  if (musicState === 'muted') {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+
+</script>
+
+</body>
+</html>

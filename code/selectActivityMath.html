@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pilihan</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      color: white;
+      background: radial-gradient(circle at bottom, #1d4ed8 10%, #3b82f6 40%, #9333ea 100%);
+    }
+
+    /* ✨ Twinkling Stars */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out alternate;
+    }
+
+    @keyframes twinkle {
+      from { opacity: 0.3; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.5); }
+    }
+
+    /* 🚀 Floating Animations */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes flyAcross {
+      0% { transform: translateX(-200px) rotate(10deg); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }
+    }
+
+    @keyframes diagonalFallRightToLeft {
+      0% { transform: translate(0, 0); opacity: 1; }
+      100% { transform: translate(-100vw, 110vh); opacity: 0; }
+    }
+
+    /* 🌠 Floating Images */
+    img.icon {
+      position: absolute;
+      width: 80px;
+      opacity: 0.9;
+    }
+    .rocket { top: 100px; left: -100px; animation: flyAcross 15s linear infinite; }
+    .astronaut { bottom: 150px; right: 50px; animation: float 6s ease-in-out infinite; }
+    .alien { bottom: 100px; left: 70px; animation: float 5s ease-in-out infinite; }
+    .comet { top: 30px; right: -100px; animation: flyAcross 12s linear infinite reverse; }
+
+    /* 🌌 Central Layout */
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+      z-index: 3;
+    }
+
+    .center-image {
+      width: 150px;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 15px 0 20px;
+      text-shadow: 2px 2px 10px #00f2ff;
+      z-index: 2;
+    }
+
+    /* Horizontal buttons */
+    .button-row {
+      display: flex;
+      gap: 30px;
+      z-index: 2;
+    }
+
+   .option-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 25px; /* slightly bigger padding */
+  font-size: 1.2em;   /* bigger text */
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(to right, #00f260, #0575e6);
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  box-shadow: 0px 0px 25px #00f260;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.option-btn:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 35px #a7f3d0;
+  background: linear-gradient(to right, #00f2ff, #9333ea);
+}
+
+.btn-icon {
+  width: 70px;  /* bigger icon */
+  height: 70px;
+  margin-bottom: 8px; /* spacing between icon and text */
+}
+
+.btn-text {
+  font-size: 1em;  /* slightly bigger text */
+  text-align: center;
+}
+
+    /* 🎵 Music & Settings Buttons */
+    .music-btn, .settings-btn, .back-btn {
+      position: absolute;
+      top: 20px;
+      width: 40px;
+      height: 40px;
+      border: none;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2em;
+      color: white;
+      background: rgba(255,255,255,0.2);
+      transition: background 0.3s ease;
+      z-index: 10;
+    }
+    .music-btn:hover, .settings-btn:hover, .back-btn:hover { background: rgba(255,255,255,0.4); }
+    .back-btn { left: 20px; z-index:11; }
+    .settings-btn { right: 70px; }
+    .music-btn { right: 20px; }
+
+    /* Falling meteors */
+    .falling-meteor {
+      position: absolute;
+      top: -100px;
+      width: 80px;
+      height: 80px;
+      background: url('meteor.png') no-repeat center/contain;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Buttons -->
+<button class="back-btn" onclick="window.location.href='homepage.html'">&#8592;</button>
+<button class="settings-btn" onclick="window.location.href='settings.html'">&#9881;</button>
+<button class="music-btn" onclick="toggleMusic()" title="Toggle Music">🔊</button>
+
+<!-- Floating Images -->
+  <img src="roket.png" class="icon rocket" alt="Rocket">
+  <img src="rocket.png" class="icon astronaut" alt="Astronaut">
+  <img src="meteor.png" class="icon alien" alt="Alien">
+  <img src="galaxy.png" class="icon comet" alt="Comet">
+
+<!-- Stars -->
+<script>
+for(let i=0;i<60;i++){
+  const star=document.createElement('div');
+  star.classList.add('star');
+  star.style.top=Math.random()*100+'vh';
+  star.style.left=Math.random()*100+'vw';
+  star.style.animationDuration=(2+Math.random()*2)+'s';
+  document.body.appendChild(star);
+}
+</script>
+
+<!-- Main Content -->
+<div class="center">
+  <img src="planet.png" alt="planet" class="center-image">
+  <h1>Pilih Aktiviti</h1>
+  <div class="button-row">
+  <button class="option-btn" onclick="playClick(); window.location.href='selectNotaMath.html'">
+    <img src="notaIcon.png" alt="Nota Icon" class="btn-icon">
+    <span class="btn-text">Nota</span>
+  </button>
+  <button class="option-btn" onclick="playClick(); window.location.href='selectLvlMath.html'">
+    <img src="quizIcon.png" alt="Quiz Icon" class="btn-icon">
+    <span class="btn-text">Quiz</span>
+  </button>
+</div>
+
+</div>
+
+<!-- Audio -->
+<audio id="bg-music" autoplay loop>
+  <source src="bgMusic.mp3" type="audio/mpeg">
+</audio>
+<audio id="click-sound" src="pop.mp3"></audio>
+<audio id="meteor-sound" src="whoosh.mp3"></audio>
+
+<!-- Flying Meteors -->
+<div class="falling-meteor"></div>
+<div class="falling-meteor"></div>
+<div class="falling-meteor"></div>
+
+<script>
+/* --- MUSIC CONTROL --- */
+const music = document.getElementById('bg-music');
+const clickSound = document.getElementById('click-sound');
+const musicBtn = document.querySelector('.music-btn');
+
+// ======== Music toggle & persistence across all pages ========
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  
+  if (music.paused) {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicState', 'playing');
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicState', 'muted');
+  }
+}
+
+// When leaving the page, save the time
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+// When page loads, restore the state
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicState = localStorage.getItem('musicState');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+
+  if (musicState === 'muted') {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+
+
+function playClick(){
+  clickSound.currentTime=0;
+  clickSound.play();
+}
+
+window.addEventListener('load',()=>{
+  const savedTime=localStorage.getItem('bgMusicTime');
+  if(savedTime) music.currentTime=parseFloat(savedTime);
+});
+
+window.addEventListener('beforeunload',()=>{
+  localStorage.setItem('bgMusicTime',music.currentTime);
+});
+
+const meteors = document.querySelectorAll('.falling-meteor');
+const meteorSound = document.getElementById('meteor-sound');
+
+function launchMeteor(meteor){
+  const startX = Math.random()*window.innerWidth;
+  const startY = Math.random()*-200;
+  meteor.style.left = `${startX}px`;
+  meteor.style.top = `${startY}px`;
+  meteor.style.opacity = 1;
+
+  meteor.style.transition = 'transform 3s linear, opacity 3s linear';
+  const endX = startX - (window.innerWidth + 100);
+  const endY = window.innerHeight + 200;
+  meteor.style.transform = `translate(${endX - startX}px, ${endY - startY}px) rotate(45deg)`;
+
+  meteorSound.currentTime = 0;
+  meteorSound.play();
+
+  setTimeout(() => {
+    meteor.style.transition = '';
+    meteor.style.transform = '';
+    meteor.style.opacity = 0;
+    launchMeteor(meteor);
+  }, 3000);
+}
+
+meteors.forEach(meteor => launchMeteor(meteor));
+</script>
+
+</body>
+</html>

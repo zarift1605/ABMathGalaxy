@@ -1,0 +1,292 @@
+  <!DOCTYPE html>
+  <html lang="ms">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABMath - Profil Ibu Bapa</title>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin:0; padding:0;
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(circle at bottom, #1d4ed8 10%, #3b82f6 40%, #9333ea 100%);
+      height:100vh; color:#333; overflow:auto;
+      display:flex; align-items:center; justify-content:center;
+      position:relative;
+    }
+
+    /* ✨ Stars */
+    .star { position:absolute; width:2px; height:2px; background:white; border-radius:50%; opacity:0.8; animation: twinkle 2s infinite ease-in-out alternate; z-index:1;}
+    @keyframes twinkle { from {opacity:0.3; transform:scale(1);} to {opacity:1; transform:scale(1.5);} }
+    @keyframes float {0%{transform:translateY(0)}50%{transform:translateY(-15px)}100%{transform:translateY(0)}}
+    @keyframes flyAcross {0%{transform:translateX(-200px) rotate(10deg);opacity:0;}50%{opacity:1;}100%{transform:translateX(120vw) rotate(25deg);opacity:0;}}
+
+    .container { width:90%; max-width:400px; background:rgba(255,255,255,0.15); backdrop-filter:blur(15px); border-radius:25px; padding:25px; box-shadow:0 20px 40px rgba(0,0,0,0.2); position:relative; z-index:3;}
+    .back-btn { position:absolute; top:15px; left:15px; background: rgba(255,255,255,0.2); border:none; border-radius:50%; width:38px; height:38px; display:flex; align-items:center; justify-content:center; font-size:1.1em; color:white; cursor:pointer; transition: background 0.2s ease; z-index:10;}
+    .back-btn:hover { background: rgba(255,255,255,0.4);}
+    .app-title { text-align:center; color:white; font-size:18px; font-weight:600; margin:10px 0; text-shadow:0 2px 4px rgba(0,0,0,0.1); }
+
+    .profile-header { text-align:center; margin-bottom:20px; position:relative; z-index:3; }
+   .profile-picture {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15); /* fallback bg */
+  margin: 0 auto 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  border: 2px solid rgba(255,255,255,0.4);
+  animation: float 4s ease-in-out infinite;
+}
+
+.profile-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+    .user-name { font-size:22px; font-weight:700; color:white; margin-bottom:6px; }
+    .user-email { font-size:14px; color:rgba(255,255,255,0.8); margin-bottom:15px; }
+
+    /* 🌟 Children section (Anak + names) */
+    /* 🌟 Children section (Anak + names) */
+  .children-container { 
+    display:flex; 
+    flex-direction:column; 
+    align-items:center; 
+    gap:12px; 
+    margin-bottom:20px; 
+  }
+
+  .child-label {
+    background: linear-gradient(135deg, #f6d365, #9333ea); /* Gradient to match galaxy vibe */
+    color: white;
+    font-size: 18px; /* Bigger font */
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 25px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3); /* subtle depth */
+    text-align: center;
+  }
+
+  .child-names {
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+  .child-name {
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    backdrop-filter: blur(5px);
+  }
+
+
+    .menu-section { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); border-radius:25px; padding:20px; box-shadow:0 15px 30px rgba(0,0,0,0.15); border:1px solid rgba(255,255,255,0.3);}
+    .menu-item { display:flex; align-items:center; padding:14px 0; border-bottom:1px solid rgba(102,126,234,0.1); cursor:pointer; transition:all 0.3s ease; }
+    .menu-item:last-child { border-bottom:none; }
+    .menu-item:hover { transform:translateX(5px); background: rgba(147,51,234,0.05); margin:0 -20px; padding-left:25px; padding-right:20px; border-radius:15px;}
+    .menu-icon { width:42px; height:42px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-right:15px; font-size:20px; color:white; }
+    .child-icon { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); }
+    .home-icon { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+    .logout-icon { background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); }
+    .menu-title { font-size:16px; font-weight:600; color:#333; margin-bottom:3px; }
+    .menu-subtitle { font-size:13px; color:#666; }
+
+    img.icon { position:absolute; width:100px; opacity:0.9; z-index:2; }
+    .rocket { top:150px; left:-150px; animation: flyAcross 15s linear infinite; }
+    .comet { top:30px; right:-100px; animation: flyAcross 12s linear infinite reverse; }
+  </style>
+  </head>
+  <body>
+
+  <img src="rocket.png" class="icon rocket" alt="Roket">
+  <img src="comet.png" class="icon comet" alt="Komet">
+
+  <div class="container">
+    <button class="back-btn" onclick="window.history.back()">&#8592;</button>
+    <div class="app-title">ABMath Galaxy</div>
+
+    <div class="profile-header">
+      <div class="profile-picture">👨‍👩‍👧</div>
+      <div class="user-name">Ibu Bapa</div>
+      <div class="user-email">parent@abmath.com</div>
+    </div>
+
+    <!-- 🌟 Children list with "Anak" label -->
+    <div class="children-container" id="childrenContainer">
+      <!-- Children names will be injected here -->
+    </div>
+
+    <div class="menu-section">
+      <div class="menu-item" onclick="window.location.href='parentDashboard.html'">
+        <div class="menu-icon home-icon">🏠</div>
+        <div class="menu-content">
+          <div class="menu-title">Kembali ke Laman Utama</div>
+          <div class="menu-subtitle">Pergi ke papan pemuka ibu bapa</div>
+        </div>
+      </div>
+      <div class="menu-item" onclick="window.location.href='login.html'">
+        <div class="menu-icon logout-icon">🚪</div>
+        <div class="menu-content">
+          <div class="menu-title">Log Keluar</div>
+          <div class="menu-subtitle">Keluar dari akaun anda</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bg-music" autoplay loop>
+    <source src="bgMusic.mp3" type="audio/mpeg">
+  </audio>
+
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD3iyKczmk97lG68Pthi_KyPlfY6ZxM9no",
+    authDomain: "abmath-galaxy-new.firebaseapp.com",
+    projectId: "abmath-galaxy-new",
+    storageBucket: "abmath-galaxy-new.appspot.com",
+    messagingSenderId: "163126177991",
+    appId: "1:163126177991:web:c0562ab5bf7a50c3538ee2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // 🌟 Generate stars
+  for(let i=0;i<60;i++){
+    const star=document.createElement('div');
+    star.classList.add('star');
+    star.style.top=Math.random()*100+'vh';
+    star.style.left=Math.random()*100+'vw';
+    star.style.animationDuration=(2+Math.random()*2)+'s';
+    document.body.appendChild(star);
+  }
+
+  // 🎯 Load parent profile
+  onAuthStateChanged(auth, async (user)=>{
+    if(!user) return window.location.href="login.html";
+    const docRef=doc(db,"users",user.uid);
+    const docSnap=await getDoc(docRef);
+    if(!docSnap.exists()) return window.location.href="selectProfile.html";
+
+    const data=docSnap.data();
+    if(data.role!=="parent"){
+      if(data.role==="teacher") window.location.href="profileTeacher.html";
+      else if(data.role==="student") window.location.href="profile.html";
+      else window.location.href="selectProfile.html";
+      return;
+    }
+
+    document.querySelector('.user-name').textContent = data.name || "Ibu Bapa";
+    document.querySelector('.user-email').textContent = data.email || user.email;
+    if(data.avatar) document.querySelector('.profile-picture').textContent = data.avatar;
+
+    // 🌟 Render children dynamically with "Anak" label
+    const childrenContainer = document.getElementById('childrenContainer');
+    childrenContainer.innerHTML = '';
+    const children = data.children || [];
+    if(children.length){
+      const labelDiv = document.createElement('div');
+      labelDiv.classList.add('child-label');
+      labelDiv.textContent = 'Anak';
+      childrenContainer.appendChild(labelDiv);
+
+      const namesDiv = document.createElement('div');
+      namesDiv.classList.add('child-names');
+      children.forEach(child=>{
+        const nameDiv = document.createElement('div');
+        nameDiv.classList.add('child-name');
+        nameDiv.textContent = child.name;
+        namesDiv.appendChild(nameDiv);
+      });
+      childrenContainer.appendChild(namesDiv);
+    }
+  });
+
+  // 🔒 Logout
+  document.querySelector(".logout-icon").parentElement.addEventListener("click", async()=>{
+    await signOut(auth);
+    window.location.href="login.html";
+  });
+
+  // 🎵 Background music persistence
+  const music=document.getElementById('bg-music');
+  window.addEventListener('beforeunload',()=>localStorage.setItem('musicTime',music.currentTime));
+  window.addEventListener('DOMContentLoaded',()=>{
+    const t=localStorage.getItem('musicTime');
+    if(t) music.currentTime=parseFloat(t);
+    music.play();
+  });
+  // ======== Music toggle & persistence across all pages ========
+  function toggleMusic() {
+    const music = document.getElementById('bg-music');
+    const btn = document.querySelector('.music-btn');
+    
+    if (music.paused) {
+      music.play();
+      btn.textContent = '🔊';
+      localStorage.setItem('musicState', 'playing');
+    } else {
+      music.pause();
+      btn.textContent = '🔇';
+      localStorage.setItem('musicState', 'muted');
+    }
+  }
+
+  // When leaving the page, save the time
+  window.addEventListener('beforeunload', () => {
+    const music = document.getElementById('bg-music');
+    localStorage.setItem('bgMusicTime', music.currentTime);
+  });
+
+  // When page loads, restore the state
+  window.addEventListener('load', () => {
+    const music = document.getElementById('bg-music');
+    const btn = document.querySelector('.music-btn');
+    const savedTime = localStorage.getItem('bgMusicTime');
+    const musicState = localStorage.getItem('musicState');
+
+    if (savedTime) music.currentTime = parseFloat(savedTime);
+
+    if (musicState === 'muted') {
+      music.pause();
+      btn.textContent = '🔇';
+    } else {
+      music.play();
+      btn.textContent = '🔊';
+    }
+  });
+
+  // After fetching parent data from Firestore
+const profilePic = document.querySelector('.profile-picture');
+
+if(data.avatar) {
+  profilePic.textContent = ""; // Clear default emoji
+  const img = document.createElement('img');
+  img.src = data.avatar; // URL from Firestore
+  img.alt = "Avatar";
+  img.classList.add('profile-img');
+  profilePic.appendChild(img);
+} else {
+  profilePic.textContent = "👨‍👩‍👧"; // fallback
+}
+
+  </script>
+
+  </body>
+  </html>

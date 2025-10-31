@@ -1,0 +1,240 @@
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABMath Galaxy - Cipta Profil</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      color: white;
+      background: radial-gradient(circle at bottom, #1d4ed8 10%, #3b82f6 40%, #9333ea 100%);
+    }
+
+    /* ✨ Stars */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.3; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.5); }
+    }
+
+    /* 🚀 Floating animation */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+    @keyframes flyAcross {
+      0% { transform: translateX(-200px) rotate(10deg); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }
+    }
+
+    /* 🌟 Center layout */
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+      z-index: 3;
+    }
+
+    .container {
+      width: 95%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(15px);
+      border-radius: 25px;
+      padding: 25px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 3;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 10px #00f2ff;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 12px;
+      border: none;
+      font-size: 1em;
+    }
+
+    button {
+      padding: 12px 20px;
+      margin-top: 15px;
+      border: none;
+      border-radius: 15px;
+      background: linear-gradient(to right, #00f260, #0575e6);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 20px #00f260;
+      transition: all 0.3s ease;
+    }
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px #a7f3d0;
+      background: linear-gradient(to right, #00f2ff, #9333ea);
+    }
+
+    /* Floating decorative images */
+    img.icon {
+      position: absolute;
+      width: 100px;
+      opacity: 0.9;
+    }
+    .rocket { top: 150px; left: -150px; animation: flyAcross 15s linear infinite; }
+    .comet { top: 30px; right: -100px; animation: flyAcross 12s linear infinite reverse; }
+     /* Back button */
+    .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.2em;
+        color: white;
+        transition: background 0.2s ease;
+        z-index: 5;
+    }
+    .back-btn:hover {
+        background: rgba(255, 255, 255, 0.4);
+    }
+  </style>
+  </head>
+  <body>
+
+    <button class="back-btn" onclick="window.history.back()">&#8592;</button>
+
+  <!-- Floating images -->
+  <img src="rocket.png" class="icon rocket" alt="Rocket">
+  <img src="comet.png" class="icon comet" alt="Comet">
+
+  <!-- Random stars -->
+  <script>
+  for (let i = 0; i < 60; i++) {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    star.style.top = Math.random() * 100 + 'vh';
+    star.style.left = Math.random() * 100 + 'vw';
+    star.style.width = star.style.height = (1 + Math.random() * 2) + 'px';
+    star.style.opacity = 0.3 + Math.random() * 0.7;
+    star.style.animationDuration = 2 + Math.random() * 2 + 's';
+    document.body.appendChild(star);
+  }
+  </script>
+
+  <div class="center">
+    <div class="container">
+      <h1>Cipta Profil Anda</h1>
+
+      <input type="text" id="name" placeholder="Nama Anda">
+      <input type="number" id="age" placeholder="Umur">
+      <input type="text" id="class" placeholder="Kelas">
+      <select id="avatar">
+  <option value="boy.png">👨‍🎓 Lelaki</option>
+  <option value="girl.png">👩‍🎓 Perempuan</option>
+</select>
+
+
+      <button onclick="createProfile()">Simpan Profil</button>
+    </div>
+  </div>
+
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD3iyKczmk97lG68Pthi_KyPlfY6ZxM9no",
+    authDomain: "abmath-galaxy-new.firebaseapp.com",
+    projectId: "abmath-galaxy-new",
+    storageBucket: "abmath-galaxy-new.appspot.com",
+    messagingSenderId: "163126177991",
+    appId: "1:163126177991:web:c0562ab5bf7a50c3538ee2",
+    measurementId: "G-NTK08W6GRV"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  let currentUser = null;
+  let role = localStorage.getItem("userRole");
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) window.location.href = "login.html";
+    currentUser = user;
+  });
+
+  window.createProfile = async function() {
+    const name = document.getElementById("name").value;
+    const age = document.getElementById("age").value;
+    const userClass = document.getElementById("class").value;
+    const avatar = document.getElementById("avatar").value;
+
+    if (!name || !age || !userClass || !avatar) {
+      return alert("Sila lengkapkan semua medan.");
+    }
+
+    try {
+      const docRef = doc(db, "users", currentUser.uid);
+      const docSnap = await getDoc(docRef);
+
+      await setDoc(docRef, {
+        ...docSnap.data(), // merge existing email & role
+        name: name,
+        age: age,
+        class: userClass,
+        avatar: avatar,
+        stats: {
+          lessonsCompleted: 0,
+          score: 0,
+          rank: null
+        }
+      }, { merge: true });
+
+      if (role === "student") window.location.href = "homepage.html";
+      else if (role === "teacher") window.location.href = "teacherDashboard.html";
+      else window.location.href = "parentDashboard.html";
+
+    } catch (error) {
+      console.error(error);
+      alert("Gagal mencipta profil.");
+    }
+  };
+  </script>
+
+  </body>
+  </html>

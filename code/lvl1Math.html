@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Matematik - Tahap 1</title>
+<style>
+/* ====== MAIN PAGE STYLING ====== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at bottom, #1e3a8a 10%, #2563eb 40%, #9333ea 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: white;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ====== NAVIGATION BUTTONS ====== */
+.back-btn, .home-btn, .music-btn, .settings-btn {
+  position: absolute;
+  top: 20px;
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.3em;
+  color: white;
+  transition: 0.3s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 10px rgba(255,255,255,0.3);
+  z-index: 10;
+}
+
+.back-btn:hover, .home-btn:hover, .music-btn:hover, .settings-btn:hover {
+  transform: scale(1.2);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.home-btn { left: 20px; }
+.back-btn { left: 80px; }
+.settings-btn { right: 80px; }
+.music-btn { right: 20px; }
+
+/* ====== FLOATING DECORATIONS ====== */
+.floating-img {
+  position: absolute;
+  width: 90px;
+  opacity: 0.9;
+  z-index: 1;
+}
+.rocket { top: 100px; left: 40px; animation: flyAcross 15s linear infinite; }
+.moon { top: 100px; right: 60px; animation: float 6s ease-in-out infinite; }
+.astronaut { bottom: 100px; right: 60px; animation: float 5s ease-in-out infinite; }
+.alien { bottom: 50px; left: 70px; animation: float 4s ease-in-out infinite; }
+.comet { top: 30px; right: -100px; animation: flyAcross 12s linear infinite reverse; }
+
+/* ====== STARS ====== */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle 2s infinite ease-in-out alternate;
+  z-index: 0;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.3; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.5); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes flyAcross {
+  0% { transform: translateX(-200px) rotate(10deg); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }
+}
+
+/* ====== HEADING & QUESTION AREA ====== */
+h1 {
+  font-size: 2em;
+  margin: 10px 0;
+  text-align: center;
+  z-index: 2;
+  text-shadow: 2px 2px 10px #00f2ff;
+}
+
+.image-container {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 20px;
+  margin-top: 80px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+  backdrop-filter: blur(6px);
+  z-index: 2;
+  animation: popIn 0.8s ease;
+}
+.image-container img {
+  width: 130px;
+  height: auto;
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ====== CHOICES ====== */
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 25px;
+  z-index: 2;
+}
+
+.choice-btn {
+  background: linear-gradient(135deg, #ffdd00, #ff7b00);
+  padding: 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1.4em;
+  font-weight: bold;
+  color: black;
+  text-align: center;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 0 #d97706;
+}
+
+.choice-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0px 6px 10px rgba(0,0,0,0.3);
+}
+
+.choice-btn.correct {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+.choice-btn.wrong {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: white;
+}
+
+/* ====== MESSAGES ====== */
+#message {
+  margin-top: 20px;
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #00ffcc;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+  display: none;
+  z-index: 3;
+}
+
+#wrong-message {
+  margin-top: 15px;
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #ff3333;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+  display: none;
+  z-index: 3;
+}
+
+</style>
+</head>
+<body>
+  <!-- Navigation Buttons -->
+<button class="settings-btn" onclick="window.location.href='settings.html'">&#9881;</button>
+<button class="back-btn" onclick="window.location.href='selectLvlMath.html'">&#8592;</button>
+<button class="home-btn" onclick="window.location.href='homepage.html'">🏠</button>
+<button class="music-btn" onclick="toggleMusic()">🔊</button>
+
+<!-- Floating Images -->
+<img src="roket.png" class="floating-img rocket">
+<img src="moon.png" class="floating-img moon">
+<img src="rocket.png" class="floating-img astronaut">
+<img src="planet.png" class="floating-img alien">
+<img src="comet.png" class="floating-img comet">
+
+<!-- Stars -->
+<div id="stars"></div>
+
+<div class="image-container">
+  <img src="boy.png" alt="Soalan">
+</div>
+
+<h1>1 + 6 = ?</h1>
+<h1>Sila pilih jawapan di bawah</h1>
+
+<div class="choices">
+  <button class="choice-btn" onclick="checkAnswer(this,'8','7')">8</button>
+  <button class="choice-btn" onclick="checkAnswer(this,'7','7')">7</button>
+  <button class="choice-btn" onclick="checkAnswer(this,'10','7')">10</button>
+  <button class="choice-btn" onclick="checkAnswer(this,'5','7')">5</button>
+</div>
+
+<div id="message">✅ Tahniah! Jawapan anda betul</div>
+<div id="wrong-message">❌ Oops! Sila Cuba lagi.</div>
+
+ <!-- Background Music -->
+  <audio id="bg-music" autoplay loop>
+    <source src="bgMusic.mp3" type="audio/mpeg">
+  </audio>
+
+
+<audio id="meteor-sound" src="whoosh.mp3"></audio>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD3iyKczmk97lG68Pthi_KyPlfY6ZxM9no",
+    authDomain: "abmath-galaxy-new.firebaseapp.com",
+    projectId: "abmath-galaxy-new",
+    storageBucket: "abmath-galaxy-new.appspot.com",
+    messagingSenderId: "163126177991",
+    appId: "1:163126177991:web:c0562ab5bf7a50c3538ee2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  let questionStartTime = Date.now();
+  const message = document.getElementById('message');
+  const wrongMessage = document.getElementById('wrong-message');
+
+  async function awardMarks(points){
+    const user = auth.currentUser;
+    if(!user) return;
+    const userRef = doc(db, "users", user.uid);
+    try{
+      const docSnap = await getDoc(userRef);
+      if(docSnap.exists()){
+        await updateDoc(userRef, { mathMarks: increment(points) });
+      } else {
+        await setDoc(userRef, { name: user.displayName || "Pelajar", role:"student", mathMarks:points, highestMathLevel:0 });
+      }
+      console.log("✅ Mark added:", points);
+    }catch(e){ console.error(e); }
+  }
+
+  function goToNextQuestion(levelNumber){
+    let questions = JSON.parse(localStorage.getItem(`mathLevel${levelNumber}Questions`)||'[]');
+    let usedQuestions = JSON.parse(localStorage.getItem(`usedMathLevel${levelNumber}`)||'[]');
+
+    const currentPath = window.location.pathname.split('/').pop();
+    if(!usedQuestions.includes(currentPath)) usedQuestions.push(currentPath);
+    localStorage.setItem(`usedMathLevel${levelNumber}`, JSON.stringify(usedQuestions));
+
+    const nextQ = questions.find(q => !usedQuestions.includes(q));
+    if(nextQ) { window.location.href = nextQ; return; }
+
+    // All questions done
+    alert("Tahniah! Semua soalan tahap ini telah selesai.");
+
+    let highestUnlocked = parseInt(localStorage.getItem('highestUnlockedMath')||'1');
+    if(levelNumber === highestUnlocked && highestUnlocked < 5) {
+      localStorage.setItem('highestUnlockedMath', highestUnlocked+1);
+    }
+
+    // Update Firestore highestMathLevel
+    const user = auth.currentUser;
+    if(user){
+      const userRef = doc(db,"users",user.uid);
+      getDoc(userRef).then(docSnap=>{
+        const prev = docSnap.exists()? docSnap.data().highestMathLevel??0 :0;
+        if(levelNumber > prev) updateDoc(userRef, {highestMathLevel: levelNumber});
+      });
+    }
+
+    localStorage.setItem(`mathLevel${levelNumber}_completed`, 'true');
+    setTimeout(()=>{ window.location.href = "selectLvlMath.html"; },800);
+  }
+
+  window.checkAnswer = function(target, answer, correct){
+    const elapsed = ((Date.now() - questionStartTime)/1000).toFixed(1);
+    if(answer===correct){
+      let points = elapsed<=2?15: elapsed<=5?10: elapsed<=10?5:2;
+      message.style.display="block";
+      wrongMessage.style.display="none";
+      message.textContent=`⏱ Masa: ${elapsed}s ✅ Betul! (+${points} markah)`;
+      awardMarks(points);
+      target.classList.add("correct");
+      document.querySelectorAll(".choice-btn").forEach(b=>b.disabled=true);
+
+      let countdown=3;
+      const interval=setInterval(()=>{
+        if(countdown>0){
+          message.textContent=`⏱ Masa: ${elapsed}s ✅ Betul! (+${points}) Soalan seterusnya dalam ${countdown}`;
+          countdown--;
+        } else { clearInterval(interval); goToNextQuestion(1); }
+      },1000);
+
+    } else {
+      wrongMessage.style.display="block";
+      target.classList.add("wrong");
+      setTimeout(()=>{ target.classList.remove("wrong"); wrongMessage.style.display="none"; },1000);
+    }
+  };
+
+  // Stars
+  for(let i=0;i<60;i++){
+    const star=document.createElement('div');
+    star.classList.add('star');
+    star.style.top=Math.random()*100+'vh';
+    star.style.left=Math.random()*100+'vw';
+    star.style.animationDuration=(2+Math.random()*2)+'s';
+    document.body.appendChild(star);
+  }
+  const music = document.getElementById('bg-music');
+
+// Save current time before leaving
+window.addEventListener('beforeunload', () => {
+  localStorage.setItem('musicTime', music.currentTime);
+});
+
+// Resume music when page loads
+window.addEventListener('DOMContentLoaded', () => {
+  const lastTime = localStorage.getItem('musicTime');
+  if (lastTime) {
+    music.currentTime = parseFloat(lastTime);
+  }
+  music.play();
+});
+// ======== Music toggle & persistence across all pages ========
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  
+  if (music.paused) {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicState', 'playing');
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicState', 'muted');
+  }
+}
+
+// When leaving the page, save the time
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+// When page loads, restore the state
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicState = localStorage.getItem('musicState');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+
+  if (musicState === 'muted') {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+
+</script>
+</body>
+</html>

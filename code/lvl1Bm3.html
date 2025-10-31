@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AB Math Galaxy Word Game</title>
+<style>
+/* ====== MAIN PAGE STYLING ====== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: radial-gradient(circle at bottom, #1e3a8a 10%, #2563eb 40%, #9333ea 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: white;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ====== NAVIGATION BUTTONS ====== */
+.back-btn, .home-btn, .music-btn, .settings-btn {
+  position: absolute;
+  top: 20px;
+  background: rgba(255, 255, 255, 0.25);
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.3em;
+  color: white;
+  transition: 0.3s ease;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 0 10px rgba(255,255,255,0.3);
+  z-index: 10;
+}
+
+.back-btn:hover, .home-btn:hover, .music-btn:hover, .settings-btn:hover {
+  transform: scale(1.2);
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.home-btn { left: 20px; }
+.back-btn { left: 80px; }
+.settings-btn { right: 80px; }
+.music-btn { right: 20px; }
+
+/* ====== FLOATING DECORATIONS ====== */
+.floating-img {
+  position: absolute;
+  width: 90px;
+  opacity: 0.9;
+  z-index: 1;
+}
+.rocket { top: 100px; left: 40px; animation: flyAcross 15s linear infinite; }
+.moon { top: 100px; right: 60px; animation: float 6s ease-in-out infinite; }
+.astronaut { bottom: 100px; right: 60px; animation: float 5s ease-in-out infinite; }
+.alien { bottom: 50px; left: 70px; animation: float 4s ease-in-out infinite; }
+.comet { top: 30px; right: -100px; animation: flyAcross 12s linear infinite reverse; }
+
+/* ====== STARS ====== */
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: twinkle 2s infinite ease-in-out alternate;
+  z-index: 0;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.3; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.5); }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+@keyframes flyAcross {
+  0% { transform: translateX(-200px) rotate(10deg); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }
+}
+
+/* ====== HEADING & QUESTION AREA ====== */
+h1 {
+  font-size: 2em;
+  margin: 10px 0;
+  text-align: center;
+  z-index: 2;
+  text-shadow: 2px 2px 10px #00f2ff;
+}
+
+.image-container {
+  background: rgba(255,255,255,0.1);
+  padding: 20px;
+  border-radius: 20px;
+  margin-top: 80px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+  backdrop-filter: blur(6px);
+  z-index: 2;
+  animation: popIn 0.8s ease;
+}
+.image-container img {
+  width: 130px;
+  height: auto;
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes popIn {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* ====== CHOICES ====== */
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 25px;
+  z-index: 2;
+}
+
+.choice-btn {
+  background: linear-gradient(135deg, #ffdd00, #ff7b00);
+  padding: 15px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 1.4em;
+  font-weight: bold;
+  color: black;
+  text-align: center;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 0 #d97706;
+}
+
+.choice-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0px 6px 10px rgba(0,0,0,0.3);
+}
+
+.choice-btn.correct {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+}
+.choice-btn.wrong {
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: white;
+}
+
+/* ====== MESSAGES ====== */
+#message {
+  margin-top: 20px;
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #00ffcc;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+  display: none;
+  z-index: 3;
+}
+
+#wrong-message {
+  margin-top: 15px;
+  font-size: 1.8em;
+  font-weight: bold;
+  color: #ff3333;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.4);
+  display: none;
+  z-index: 3;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Navigation Buttons -->
+<button class="settings-btn" onclick="window.location.href='settings.html'">&#9881;</button>
+<button class="back-btn" onclick="window.location.href='selectLvl.html'">&#8592;</button>
+<button class="home-btn" onclick="window.location.href='homepage.html'">🏠</button>
+<button class="music-btn" onclick="toggleMusic()">🔊</button>
+
+<!-- Floating Images -->
+<img src="roket.png" alt="rocket" class="floating-img rocket">
+  <img src="moon.png" alt="moon" class="floating-img moon">
+  <img src="rocket.png" alt="astronaut" class="floating-img astronaut">
+  <img src="planet.png" alt="alien" class="floating-img alien">
+  <img src="rocket.png" alt="comet" class="floating-img comet">
+<!-- Stars Background -->
+<div id="stars"></div>
+
+<!-- Question Title -->
+<h1>Pilih Perkataan Yang Betul Bagi Gambar di Bawah</h1>
+
+<!-- Question Image -->
+<div class="image-container">
+  <img src="Kuda.png" alt="Kuda">
+</div>
+
+<!-- Choices -->
+<div class="choices">
+  <button class="choice-btn" onclick="checkAnswer(this,'1')">Kayu</button>
+  <button class="choice-btn" onclick="checkAnswer(this,'2')">Keldai</button>
+  <button class="choice-btn" onclick="checkAnswer(this,'3')">Kuda</button>
+  <button class="choice-btn" onclick="checkAnswer(this,'4')">Kawan</button>
+</div>
+
+<!-- Messages -->
+<div id="message">✅ Tahniah! Jawapan anda betul</div>
+<div id="wrong-message">❌ Salah! Cuba lagi.</div>
+
+<!-- Background Music -->
+<audio id="bg-music" autoplay loop>
+  <source src="bgMusic.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Flying Meteors -->
+<div class="meteor"></div>
+<div class="meteor"></div>
+<div class="meteor"></div>
+<audio id="meteor-sound" src="whoosh.mp3"></audio>
+
+<script>
+  // ===== Music Control =====
+  const music = document.getElementById('bg-music');
+  const musicBtn = document.querySelector('.music-btn');
+  // ======== Music toggle & persistence across all pages ========
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  
+  if (music.paused) {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicState', 'playing');
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicState', 'muted');
+  }
+}
+
+// When leaving the page, save the time
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+// When page loads, restore the state
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicState = localStorage.getItem('musicState');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+
+  if (musicState === 'muted') {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+
+  // ===== Stars generation =====
+  function generateStars(count){
+    const starsContainer = document.getElementById('stars');
+    for(let i=0;i<count;i++){
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = Math.random()*100+'%';
+      star.style.left = Math.random()*100+'%';
+      star.style.animationDuration = (Math.random()*3+1)+'s';
+      starsContainer.appendChild(star);
+    }
+  }
+
+  // ===== Answer checking =====
+  const correctAnswer = "3";
+  const message = document.getElementById('message');
+  const wrongMessage = document.getElementById('wrong-message');
+
+  function checkAnswer(button, answer){
+    if(answer === correctAnswer){
+      document.querySelectorAll('.choice-btn').forEach(b=>b.disabled=true);
+      message.style.display='block';
+      wrongMessage.style.display='none';
+      let countdown=3;
+      const interval=setInterval(()=>{
+        if(countdown>0){
+          message.textContent=`✅ Tahniah! Jawapan anda betul. Soalan seterusnya dalam... ${countdown}`;
+          countdown--;
+        }else{
+          clearInterval(interval);
+          goToNextQuestion();
+        }
+      },1000);
+    }else{
+      button.classList.add('wrong');
+      wrongMessage.style.display='block';
+      setTimeout(()=>{
+        button.classList.remove('wrong');
+        wrongMessage.style.display='none';
+      },1000);
+    }
+  }
+
+  // ===== Next Question =====
+  function goToNextQuestion(){
+    const currentPath = window.location.pathname.split('/').pop();
+    const level = currentPath.match(/lvl(\d+)Bm/i);
+    if(!level){ alert("Level tidak dijumpai!"); return; }
+    const levelNumber = level[1];
+    let questions = JSON.parse(localStorage.getItem(`bmLevel${levelNumber}Questions`))||[];
+    let usedQuestions = JSON.parse(localStorage.getItem(`usedBmLevel${levelNumber}`))||[];
+    if(!usedQuestions.includes(currentPath)) usedQuestions.push(currentPath);
+    localStorage.setItem(`usedBmLevel${levelNumber}`,JSON.stringify(usedQuestions));
+    const nextQ = questions.find(q=>!usedQuestions.includes(q));
+    if(nextQ) window.location.href = nextQ;
+    else{
+      alert("Tahniah! Anda telah menamatkan semua soalan di Level ini!");
+      let highestUnlocked = parseInt(localStorage.getItem('highestUnlocked')||'1');
+      if(parseInt(levelNumber)===highestUnlocked && highestUnlocked<5)
+        localStorage.setItem('highestUnlocked',highestUnlocked+1);
+      console.log("Unlocked up to level:",localStorage.getItem('highestUnlocked'));
+      window.location.href="selectLvl.html";
+    }
+  }
+
+  // ===== Meteor Animation =====
+  const meteors = document.querySelectorAll('.meteor');
+  const meteorSound = document.getElementById('meteor-sound');
+  function launchMeteor(meteor){
+    const delay=Math.random()*4000+2000;
+    const startX=window.innerWidth-Math.random()*(window.innerWidth/2);
+    const startY=Math.random()*-200;
+    meteor.style.left=startX+'px';
+    meteor.style.top=startY+'px';
+    setTimeout(()=>{
+      meteor.style.animation=`diagonalFallRightToLeft 3s linear`;
+      meteorSound.currentTime=0;
+      if(localStorage.getItem('effectsEnabled')!=='false') meteorSound.play();
+      setTimeout(()=>{
+        meteor.style.animation='';
+        launchMeteor(meteor);
+      },3000);
+    },delay);
+  }
+  meteors.forEach(m=>launchMeteor(m));
+</script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+  // 🔥 Firebase Config
+  const firebaseConfig = {
+    apiKey: "AIzaSyD3iyKczmk97lG68Pthi_KyPlfY6ZxM9no",
+    authDomain: "abmath-galaxy-new.firebaseapp.com",
+    projectId: "abmath-galaxy-new",
+    storageBucket: "abmath-galaxy-new.appspot.com",
+    messagingSenderId: "163126177991",
+    appId: "1:163126177991:web:c0562ab5bf7a50c3538ee2"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+
+  // ========== TIMER ==========
+  let questionStartTime;
+  window.onload = () => { questionStartTime = Date.now(); };
+
+  // ========== AWARD MARKS ==========
+  async function awardMarks(points) {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const userRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(userRef);
+
+        if (docSnap.exists()) {
+          await updateDoc(userRef, { totalMarks: increment(points) });
+        } else {
+          await setDoc(userRef, {
+            name: user.displayName || "Pelajar",
+            role: "student",
+            totalMarks: points
+          });
+        }
+
+        console.log(`✅ ${points} markah ditambah`);
+      }
+    });
+  }
+
+  // ========== CHECK ANSWER ==========
+  window.checkAnswer = function(button, answer) {
+    const correctAnswer = "3"; // ✅ correct answer for this question
+    const message = document.getElementById("message");
+    const wrongMessage = document.getElementById("wrong-message");
+
+    if (answer === correctAnswer) {
+      document.querySelectorAll(".choice-btn").forEach(btn => btn.disabled = true);
+      message.style.display = "block";
+      wrongMessage.style.display = "none";
+
+      // 🧮 Calculate marks based on speed
+      const elapsed = (Date.now() - questionStartTime) / 1000;
+      let points = 0;
+      if (elapsed <= 2) points = 15;
+      else if (elapsed <= 5) points = 10;
+      else if (elapsed <= 10) points = 5;
+      else points = 2;
+
+      message.textContent = `✅ Betul! Anda menjawab dalam ${elapsed.toFixed(1)} saat (+${points} markah)`;
+      awardMarks(points);
+
+      // Countdown before moving
+      let countdown = 3;
+      const interval = setInterval(() => {
+        if (countdown > 0) {
+          message.textContent = `✅ Betul! (+${points} markah) Soalan seterusnya dalam... ${countdown}`;
+          countdown--;
+        } else {
+          clearInterval(interval);
+          goToNextQuestion();
+        }
+      }, 1000);
+
+    } else {
+      button.classList.add("wrong");
+      wrongMessage.style.display = "block";
+      setTimeout(() => {
+        button.classList.remove("wrong");
+        wrongMessage.style.display = "none";
+      }, 1000);
+    }
+  };
+
+  // ========== NEXT QUESTION ==========
+  window.goToNextQuestion = function() {
+    const currentPath = window.location.pathname.split("/").pop();
+    const level = currentPath.match(/lvl(\d+)Bm/i);
+    if (!level) { alert("Level tidak dijumpai!"); return; }
+
+    const levelNumber = level[1];
+    let questions = JSON.parse(localStorage.getItem(`bmLevel${levelNumber}Questions`)) || [];
+    let usedQuestions = JSON.parse(localStorage.getItem(`usedBmLevel${levelNumber}`)) || [];
+
+    if (!usedQuestions.includes(currentPath)) usedQuestions.push(currentPath);
+    localStorage.setItem(`usedBmLevel${levelNumber}`, JSON.stringify(usedQuestions));
+
+    const nextQuestion = questions.find(q => !usedQuestions.includes(q));
+    if (nextQuestion) {
+      window.location.href = nextQuestion;
+    } else {
+      alert("Tahniah! Anda telah menamatkan semua soalan di Level ini!");
+      let highestUnlocked = parseInt(localStorage.getItem("highestUnlocked") || "1");
+      if (parseInt(levelNumber) === highestUnlocked && highestUnlocked < 5)
+        localStorage.setItem("highestUnlocked", highestUnlocked + 1);
+      window.location.href = "selectLvl.html";
+    }
+  };
+</script>
+
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nota</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      background: linear-gradient(to bottom, #1d4ed8, #9333ea);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      color: white;
+    }
+
+    img.icon {
+      position: absolute;
+      width: 80px;
+    }
+
+    .rocket { top: 90px; right: 40px; }
+    .astronaut { bottom: 150px; right: 80px; }
+    .static-meteor { bottom: 250px; left: 40px; }
+
+    h1, h2 {
+      font-size: 2.5em;
+      margin: 20px 0 10px;
+      z-index: 2;
+    }
+
+    .content {
+      z-index: 2;
+      max-width: 90%;
+      margin-bottom: 50px;
+      text-align: center;
+    }
+
+    .content video {
+      width: 100%;
+      max-width: 600px;
+      border-radius: 12px;
+      box-shadow: 0px 0px 25px rgba(255,255,255,0.3);
+    }
+
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px; /* now same position as in Pilihan page */
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.2em;
+  color: white;
+  transition: background 0.2s ease;
+  z-index: 5;
+}
+.back-btn:hover { background: rgba(255, 255, 255, 0.4); }
+
+
+    .music-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2em;
+      color: white;
+      transition: background 0.2s ease;
+      z-index: 10;
+    }
+    .music-btn:hover { background: rgba(255, 255, 255, 0.4); }
+
+    .settings-btn {
+      position: absolute;
+      top: 20px;
+      right: 70px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2em;
+      color: white;
+      transition: background 0.2s ease;
+      z-index: 10;
+    }
+
+    .falling-meteor {
+      position: absolute;
+      top: -100px;
+      width: 80px;
+      height: 80px;
+      background: url('meteor.png') no-repeat center/contain;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    @keyframes diagonalFallRightToLeft {
+      0% { transform: translate(0, 0); opacity: 1; }
+      100% { transform: translate(-100vw, 110vh); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Buttons -->
+<button class="settings-btn" onclick="window.location.href='settings.html'">&#9881;</button>
+<button class="back-btn" onclick="window.location.href='selectNotaMath.html'">&#8592;</button>
+<button class="music-btn" onclick="toggleMusic()" title="Toggle Music">🔊</button>
+
+<!-- Floating images -->
+<img src="moon.png" alt="moon" class="icon rocket">
+<img src="meteor.png" alt="meteor" class="icon astronaut">
+<img src="rocket.png" alt="rocket" class="icon static-meteor">
+
+<!-- Page Content -->
+<h2>Nota Matematik</h2>
+<div class="content">
+  <video controls autoplay loop muted>
+    <source src="notaDarab.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<!-- Audio -->
+<audio id="bg-music" autoplay loop>
+  <source src="bgMusic.mp3" type="audio/mpeg">
+</audio>
+<audio id="meteor-sound" src="whoosh.mp3"></audio>
+
+<!-- Flying Meteors -->
+<div class="falling-meteor"></div>
+<div class="falling-meteor"></div>
+<div class="falling-meteor"></div>
+
+<script>
+/* --- MUSIC CONTROL --- */
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  let musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
+
+  if (musicEnabled) {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicEnabled', 'false');
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicEnabled', 'true');
+  }
+}
+
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicEnabled = localStorage.getItem('musicEnabled') !== 'false';
+  const savedVolume = localStorage.getItem('volumeLevel');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+  music.volume = savedVolume !== null ? savedVolume / 100 : 0.7;
+
+  if (!musicEnabled) {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+/* --- METEORS --- */
+const meteors = document.querySelectorAll('.falling-meteor');
+const meteorSound = document.getElementById('meteor-sound');
+const savedVolume = localStorage.getItem('volumeLevel');
+if (savedVolume !== null) meteorSound.volume = savedVolume / 100;
+
+function launchMeteor(meteor) {
+  const delay = Math.random() * 4000 + 2000;
+  const startX = window.innerWidth - Math.random() * (window.innerWidth / 2);
+  const startY = Math.random() * -200;
+
+  meteor.style.left = `${startX}px`;
+  meteor.style.top = `${startY}px`;
+
+  setTimeout(() => {
+    meteor.style.animation = `diagonalFallRightToLeft 3s linear`;
+    meteorSound.currentTime = 0;
+    if (localStorage.getItem('effectsEnabled') !== 'false') meteorSound.play();
+    setTimeout(() => {
+      meteor.style.animation = '';
+      launchMeteor(meteor);
+    }, 3000);
+  }, delay);
+}
+
+meteors.forEach(meteor => launchMeteor(meteor));
+</script>
+</body>
+</html>

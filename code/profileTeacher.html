@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABMath - Profil Guru</title>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: radial-gradient(circle at bottom, #1d4ed8 10%, #3b82f6 40%, #9333ea 100%);
+      height: 100vh;
+      color: #333;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out alternate;
+      z-index: 1;
+    }
+
+    @keyframes twinkle {
+      from { opacity: 0.3; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.5); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes flyAcross {
+      0% { transform: translateX(-200px) rotate(10deg); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }
+    }
+
+    .container {
+      width: 95%;
+      max-width: 400px;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(15px);
+      border-radius: 25px;
+      padding: 25px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      position: relative;
+      z-index: 3;
+    }
+
+    .back-btn {
+      position: absolute;
+      top: 15px;
+      left: 15px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 50%;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.1em;
+      color: white;
+      transition: background 0.2s ease;
+      z-index: 10;
+    }
+
+    .back-btn:hover { background: rgba(255, 255, 255, 0.4); }
+
+    .app-title {
+      text-align: center;
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      margin-top: 10px;
+      margin-bottom: 10px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 25px;
+      position: relative;
+      z-index: 3;
+    }
+
+    .profile-picture {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+      margin: 0 auto 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 45px;
+      color: #667eea;
+      box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      animation: float 4s ease-in-out infinite;
+    }
+
+    .user-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 6px;
+    }
+
+    .user-email {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 20px;
+    }
+
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+      padding: 16px 10px;
+      text-align: center;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      color: white;
+    }
+
+    .stat-number {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .menu-section {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 25px;
+      padding: 20px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .menu-item:last-child { border-bottom: none; }
+
+    .menu-item:hover {
+      transform: translateX(5px);
+      background: rgba(102, 126, 234, 0.05);
+      margin: 0 -20px;
+      padding-left: 25px;
+      padding-right: 20px;
+      border-radius: 15px;
+    }
+
+    .menu-icon {
+      width: 45px;
+      height: 45px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 15px;
+      font-size: 20px;
+      color: white;
+    }
+
+    .achievements-icon { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); }
+    .logout-icon { background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); }
+    .reports-icon { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+
+    .menu-title { font-size: 17px; font-weight: 600; color: #333; margin-bottom: 3px; }
+    .menu-subtitle { font-size: 13px; color: #666; }
+
+    img.icon {
+      position: absolute;
+      width: 100px;
+      opacity: 0.9;
+      z-index: 2;
+    }
+
+    .rocket { top: 150px; left: -150px; animation: flyAcross 15s linear infinite; }
+    .comet { top: 30px; right: -100px; animation: flyAcross 12s linear infinite reverse; }
+  </style>
+</head>
+<body>
+  <img src="rocket.png" class="icon rocket" alt="Roket">
+  <img src="comet.png" class="icon comet" alt="Komet">
+
+  <div class="container">
+    <button class="back-btn" onclick="window.history.back()">&#8592;</button>
+
+    <div class="app-title">ABMath Galaxy</div>
+    
+    <div class="profile-header">
+      <div class="profile-picture">👩‍🏫</div>
+      <div class="user-name">Guru Aisyah</div>
+      <div class="user-email">aisyah.guru@abmath.com</div>
+    </div>
+
+
+    <div class="menu-section">
+      <div class="menu-item" onclick="window.location.href='scoreboard.html'">
+        <div class="menu-icon achievements-icon">📊</div>
+        <div class="menu-content">
+          <div class="menu-title">Papan Kedudukan</div>
+          <div class="menu-subtitle">Lihat pelajar terbaik</div>
+        </div>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='teacherDashboard.html'">
+        <div class="menu-icon reports-icon">🏠</div>
+        <div class="menu-content">
+          <div class="menu-title">Kembali ke Laman Utama</div>
+          <div class="menu-subtitle">Pergi ke papan pemuka guru</div>
+        </div>
+      </div>
+
+      <div class="menu-item" onclick="window.location.href='login.html'">
+        <div class="menu-icon logout-icon">🚪</div>
+        <div class="menu-content">
+          <div class="menu-title">Log Keluar</div>
+          <div class="menu-subtitle">Keluar daripada akaun anda</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="bg-music" autoplay loop>
+  <source src="bgMusic.mp3" type="audio/mpeg">
+</audio>
+
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyD3iyKczmk97lG68Pthi_KyPlfY6ZxM9no",
+    authDomain: "abmath-galaxy-new.firebaseapp.com",
+    projectId: "abmath-galaxy-new",
+    storageBucket: "abmath-galaxy-new.appspot.com",
+    messagingSenderId: "163126177991",
+    appId: "1:163126177991:web:c0562ab5bf7a50c3538ee2",
+    measurementId: "G-NTK08W6GRV"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  // ✨ Add background stars
+  for (let i = 0; i < 60; i++) {
+    const star = document.createElement('div');
+    star.classList.add('star');
+    star.style.top = Math.random() * 100 + 'vh';
+    star.style.left = Math.random() * 100 + 'vw';
+    star.style.width = star.style.height = (1 + Math.random() * 2) + 'px';
+    star.style.opacity = 0.3 + Math.random() * 0.7;
+    star.style.animationDuration = 2 + Math.random() * 2 + 's';
+    document.body.appendChild(star);
+  }
+
+  // 🧠 Load teacher profile from Firestore
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    const docRef = doc(db, "users", user.uid);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      const data = docSnap.data();
+
+      document.querySelector('.user-name').textContent = data.name || "Guru Tanpa Nama";
+      document.querySelector('.user-email').textContent = data.email || user.email;
+
+      // Optional: display other teacher info (add these fields if you saved them)
+      if (data.subject || data.school) {
+        const info = document.createElement("div");
+        info.style.color = "rgba(255,255,255,0.8)";
+        info.textContent = `${data.subject ? 'Subjek: ' + data.subject : ''} ${data.school ? ' | Sekolah: ' + data.school : ''}`;
+        document.querySelector('.profile-header').appendChild(info);
+      }
+
+      // Update avatar (if saved)
+      const profilePic = document.querySelector('.profile-picture');
+      if (data.avatar) {
+        profilePic.textContent = data.avatar; // assuming emoji stored (👩‍🏫 / 👨‍🏫)
+      }
+    } else {
+      console.warn("⚠️ Tiada profil guru dijumpai dalam Firestore.");
+    }
+  });
+   // 🔒 Logout function
+  document.querySelector(".logout-icon").parentElement.addEventListener("click", async () => {
+    await signOut(auth);
+    window.location.href = "login.html";
+  });
+  const music = document.getElementById('bg-music');
+
+// Save current time before leaving
+window.addEventListener('beforeunload', () => {
+  localStorage.setItem('musicTime', music.currentTime);
+});
+
+// Resume music when page loads
+window.addEventListener('DOMContentLoaded', () => {
+  const lastTime = localStorage.getItem('musicTime');
+  if (lastTime) {
+    music.currentTime = parseFloat(lastTime);
+  }
+  music.play();
+});
+// ======== Music toggle & persistence across all pages ========
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  
+  if (music.paused) {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicState', 'playing');
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicState', 'muted');
+  }
+}
+
+// When leaving the page, save the time
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+// When page loads, restore the state
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicState = localStorage.getItem('musicState');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+
+  if (musicState === 'muted') {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AB Math Galaxy Level 5 BM</title>
+<style>
+body {
+  margin:0; padding:0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(to bottom, #1d4ed8, #9333ea);
+  display:flex; flex-direction:column; align-items:center;
+  min-height:100vh; color:white; position:relative; overflow:hidden;
+}
+/* Buttons */
+.back-btn,.home-btn,.music-btn,.settings-btn {
+  position:absolute; top:20px; background: rgba(255,255,255,0.2);
+  border:none; border-radius:50%; width:40px; height:40px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:1.2em; color:white; transition: background 0.2s ease; z-index:5;
+}
+.back-btn { left:70px; } .home-btn { left:20px; } .music-btn { right:20px; } .settings-btn { right:70px; }
+.back-btn:hover,.home-btn:hover,.music-btn:hover,.settings-btn:hover { background: rgba(255,255,255,0.4); }
+
+/* Floating Images */
+.floating-img { position:absolute; width:80px; opacity:0.9; z-index:1; }
+.rocket { top:100px; left:40px; } .moon { top:150px; right:40px; }
+.meteor { bottom:100px; left:60px; } .astronaut { bottom:120px; right:60px; }
+
+/* Question Image - styled like Level 4 but higher */
+.image-container {
+  margin-top: 40px;                /* higher than previous 20px */
+  background: rgba(255,255,255,0.1); /* frosted glass effect */
+  padding: 25px;                   /* slightly bigger */
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.2);
+  backdrop-filter: blur(6px);
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: popIn 0.8s ease;
+}
+
+.image-container img {
+  width: 140px;                     /* slightly bigger like Level 4 */
+  height: auto;
+  animation: float 4s ease-in-out infinite; /* gentle floating animation */
+}
+
+/* Sentences + Dropzones */
+.sentence { margin:12px 0; font-size:1.3em; z-index:2; }
+.dropzone { display:inline-block; min-width:120px; padding:8px 12px; margin:0 5px;
+  border:2px dashed white; border-radius:10px; text-align:center; font-size:1.1em;
+  background: rgba(255,255,255,0.1); transition:background 0.3s,border-color 0.3s,transform 0.2s; vertical-align:middle; }
+.dropzone.correct { background:#16a34a; border-color:#22c55e; color:white; font-weight:bold; transform:scale(1.05);}
+.dropzone.wrong { background:#dc2626; border-color:#ef4444; color:white; font-weight:bold; transform:scale(1.05); }
+
+/* Choices */
+.choices { display:flex; justify-content:center; flex-wrap:wrap; gap:20px; margin-top:25px; z-index:2; }
+.choice { width:120px; padding:15px; background: linear-gradient(to right,#f9d423,#ff4e50); border-radius:10px; text-align:center;
+  cursor:grab; user-select:none; font-size:1.2em; font-weight:bold; color:black;
+  box-shadow:0 0 15px rgba(255,255,255,0.5); transition: transform 0.2s, box-shadow 0.2s; z-index:2; }
+.choice:hover { transform:scale(1.1); box-shadow:0 0 25px rgba(255,255,255,0.7); }
+
+/* Messages */
+#message { margin-top:20px; font-size:1.5em; font-weight:bold; color:#00ffcc; text-align:center; display:none; z-index:3; }
+
+/* Meteor animation */
+.meteor { position:absolute; top:-100px; width:80px; height:80px; background:url('meteor.png') no-repeat center/contain; opacity:0; pointer-events:none; }
+@keyframes diagonalFallRightToLeft { 0%{transform:translate(0,0); opacity:1;} 100%{transform:translate(-100vw,110vh); opacity:0;} }
+/* Stars */
+.star{position:absolute;width:2px;height:2px;background:white;border-radius:50%;opacity:0.8;animation:twinkle 2s infinite ease-in-out alternate; z-index:0;}
+@keyframes twinkle{from{opacity:0.3;transform:scale(1);}to{opacity:1;transform:scale(1.5);}}
+@keyframes float{0%{transform:translateY(0);}50%{transform:translateY(-15px);}100%{transform:translateY(0);}}
+@keyframes flyAcross{0%{transform:translateX(-200px) rotate(10deg);opacity:0;}50%{opacity:1;}100%{transform:translateX(120vw) rotate(25deg);opacity:0;}}
+.meteor{position:absolute;top:-100px;width:80px;height:80px;background:url('meteor.png') no-repeat center/contain;opacity:0;pointer-events:none;}
+@keyframes diagonalFallRightToLeft{0%{transform:translate(0,0);opacity:1;}100%{transform:translate(-100vw,110vh);opacity:0;}}
+</style>
+</head>
+
+<body>
+<button class="settings-btn" onclick="window.location.href='settings.html'">&#9881;</button>
+<button class="back-btn" onclick="window.location.href='selectLvl.html'">&#8592;</button>
+<button class="home-btn" onclick="window.location.href='homepage.html'">🏠</button>
+<button class="music-btn" onclick="toggleMusic()">🔊</button>
+
+<img src="rocket.png" class="floating-img rocket">
+<img src="moon.png" class="floating-img moon">
+<img src="meteor.png" class="floating-img meteor">
+<img src="rocket.png" class="floating-img astronaut">
+
+<div class="image-container"><img src="" alt="question"></div>
+
+<div class="sentence"></div>
+<div class="sentence"></div>
+<div class="sentence"></div>
+<div class="sentence"></div>
+
+<div class="choices"></div>
+<div id="message">✅ Semua jawapan betul!</div>
+
+<audio id="bg-music" autoplay loop><source src="bgMusic.mp3" type="audio/mpeg"></audio>
+<div class="meteor"></div>
+<div class="meteor"></div>
+<div class="meteor"></div>
+<audio id="meteor-sound" src="whoosh.mp3"></audio>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getFirestore, doc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+
+// Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyD3iyKczmk97lG68Pthi_KyPlfY6ZxM9no",
+  authDomain: "abmath-galaxy-new.firebaseapp.com",
+  projectId: "abmath-galaxy-new",
+  storageBucket: "abmath-galaxy-new.appspot.com",
+  messagingSenderId: "163126177991",
+  appId: "1:163126177991:web:c0562ab5bf7a50c3538ee2"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+// Questions
+const questions = [
+  { image:"kebaya.png", sentences:[{text:"1. Ini", answer:"baju"},{text:"2. Ini baju", answer:"kebaya"},{text:"3. Ini baju kebaya", answer:"hitam"},{text:"4. Baju kebaya hitam", answer:"cantik"}], choices:["baju","kebaya","hitam","cantik"]},
+  { image:"baca.png", sentences:[{text:"1. Ini", answer:"Ali"},{text:"2. Ali baca", answer:"buku"},{text:"3. Ali baca buku", answer:"baru"}], choices:["Ali","buku","baru"]},
+  { image:"kereta.png", sentences:[{text:"1. Ini", answer:"kereta"},{text:"2. Ini kereta", answer:"merah"},{text:"3. Kereta merah", answer:"cantik"}], choices:["kereta","merah","cantik"]},
+  { image:"buku.png", sentences:[{text:"1. Ini", answer:"buku"},{text:"2. Ini buku", answer:"baharu"},{text:"3. Buku baharu", answer:"tebal"}], choices:["buku","baharu","tebal"]}
+];
+
+// Shuffle
+function shuffle(array){ return array.sort(()=>Math.random()-0.5);}
+let shuffledQuestions = shuffle([...questions]);
+
+const imageContainer = document.querySelector('.image-container img');
+const sentenceDivs = document.querySelectorAll('.sentence');
+const choicesContainer = document.querySelector('.choices');
+const message = document.getElementById('message');
+
+let currentIndex = 0;
+let startTime;
+
+// Load question
+function loadQuestion(q){
+  choicesContainer.innerHTML = "";
+document.querySelectorAll('.dropzone').forEach(dz => dz.remove());
+
+  imageContainer.src = q.image;
+  sentenceDivs.forEach((s,i)=>{
+    if(q.sentences[i]){
+      s.style.display="block";
+      s.innerHTML=`${q.sentences[i].text} <span class="dropzone" data-answer="${q.sentences[i].answer}">Seret jawapan di sini</span>.`;
+    } else s.style.display="none";
+  });
+
+  choicesContainer.innerHTML="";
+  shuffle(q.choices).forEach(c=>{
+    const div=document.createElement("div");
+    div.className="choice"; div.draggable=true; div.dataset.word=c; div.textContent=c;
+    choicesContainer.appendChild(div);
+    div.addEventListener('dragstart', e=> e.dataTransfer.setData('text', c));
+  });
+
+  document.querySelectorAll('.dropzone').forEach(dz=>{
+    dz.classList.remove('correct','wrong'); dz.textContent="Seret jawapan di sini";
+    dz.addEventListener('dragover', e=>e.preventDefault());
+    dz.addEventListener('drop', handleDrop);
+  });
+
+  startTime = Date.now();
+}
+
+function handleDrop(e){
+  e.preventDefault();
+  let dz = e.target;
+  if(!dz.classList.contains('dropzone')) dz = dz.closest('.dropzone');
+  const word = e.dataTransfer.getData('text');
+  if(word === dz.dataset.answer){
+    dz.textContent = word; dz.classList.add('correct'); dz.classList.remove('wrong');
+    checkAll();
+  } else {
+    dz.classList.add('wrong'); dz.classList.remove('correct');
+    setTimeout(()=>{ dz.classList.remove('wrong'); dz.textContent="Seret jawapan di sini"; },1000);
+  }
+}
+
+// ✅ Updated checkAll() with final congratulatory message + confetti + redirect
+function checkAll(){
+  // Only check dropzones inside the currently visible question
+  const currentSentences = document.querySelectorAll('.sentence:not([style*="display: none"]) .dropzone');
+  const allCorrect = Array.from(currentSentences).every(dz => dz.textContent === dz.dataset.answer);
+
+  if(allCorrect){
+    let elapsed = (Date.now()-startTime)/1000;
+    let points = elapsed<=2?15: elapsed<=5?10: elapsed<=10?5:2;
+    message.style.display='block';
+    let countdown=2;
+    const interval = setInterval(()=>{
+      if(countdown>0){
+        message.textContent=`✅ Semua jawapan betul! (+${points} markah) Seterusnya dalam ${countdown}`;
+        countdown--;
+      } else {
+        clearInterval(interval);
+        awardPoints(points);
+        currentIndex++;
+        if(currentIndex < shuffledQuestions.length){
+          loadQuestion(shuffledQuestions[currentIndex]);
+          message.style.display='none';
+        } else {
+          // 🎉 Final message for kids
+          message.innerHTML = `
+            🌟 <b>Tahniah!</b> 🌟<br>
+            Anda telah menamatkan <b>SEMUA LEVEL Bahasa Melayu!</b><br>
+            🥳 Hebatnya anda, teruskan belajar dengan semangat! 🚀
+          `;
+          message.style.display = 'block';
+          message.style.color = '#ffea00';
+          message.style.textShadow = '0 0 15px #fff, 0 0 25px #ff00ff';
+          choicesContainer.innerHTML = "";
+          sentenceDivs.forEach(s => s.style.display = "none");
+          imageContainer.style.display = "none";
+
+          createConfetti();
+
+          // Redirect after 5 seconds
+          setTimeout(() => {
+            window.location.href = 'selectLvl.html';
+          }, 5000);
+        }
+      }
+    },1000);
+  }
+}
+
+function awardPoints(points){
+  onAuthStateChanged(auth,user=>{
+    if(user){
+      const userRef=doc(db,"users",user.uid);
+      updateDoc(userRef,{ totalMarks: increment(points), highestLevel: Math.max(5,user.highestLevel||0) });
+    }
+  });
+}
+
+// Confetti animation
+function createConfetti(){
+  for(let i=0; i<40; i++){
+    const confetti=document.createElement('div');
+    confetti.style.position='fixed';
+    confetti.style.width='10px';
+    confetti.style.height='10px';
+    confetti.style.background=`hsl(${Math.random()*360},100%,50%)`;
+    confetti.style.left=Math.random()*100+'vw';
+    confetti.style.top='-20px';
+    confetti.style.opacity='0.9';
+    confetti.style.borderRadius='50%';
+    confetti.style.pointerEvents='none';
+    document.body.appendChild(confetti);
+
+    const fall=Math.random()*3+2;
+    const spin=Math.random()*360;
+    confetti.animate([
+      { transform:`translateY(0) rotate(${spin}deg)` },
+      { transform:`translateY(110vh) rotate(${spin+720}deg)` }
+    ], { duration: fall*1000, easing:'linear', iterations:1 });
+
+    setTimeout(()=>confetti.remove(), fall*1000);
+  }
+}
+
+// Initial
+loadQuestion(shuffledQuestions[currentIndex]);
+
+/// ======== Music toggle & persistence across all pages ========
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  
+  if (music.paused) {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicState', 'playing');
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicState', 'muted');
+  }
+}
+
+// When leaving the page, save the time
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+// When page loads, restore the state
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicState = localStorage.getItem('musicState');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+
+  if (musicState === 'muted') {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+
+// Meteors
+const meteors=document.querySelectorAll('.meteor'); 
+const meteorSound=document.getElementById('meteor-sound');
+function launchMeteor(m){ 
+  const delay=Math.random()*4000+2000; 
+  setTimeout(()=>{ 
+    m.style.animation='diagonalFallRightToLeft 3s linear'; 
+    meteorSound.currentTime=0; meteorSound.play();
+    setTimeout(()=>{ m.style.animation=''; launchMeteor(m); },3000);
+  }, delay);
+}
+meteors.forEach(m=>launchMeteor(m));
+const music = document.getElementById('bg-music');
+
+// Save current time before leaving
+window.addEventListener('beforeunload', () => {
+  localStorage.setItem('musicTime', music.currentTime);
+});
+
+// Resume music when page loads
+window.addEventListener('DOMContentLoaded', () => {
+  const lastTime = localStorage.getItem('musicTime');
+  if (lastTime) {
+    music.currentTime = parseFloat(lastTime);
+  }
+  music.play();
+});
+// --- Stars ---
+for(let i=0;i<60;i++){
+  const star=document.createElement('div');
+  star.classList.add('star');
+  star.style.top=Math.random()*100+'vh';
+  star.style.left=Math.random()*100+'vw';
+  star.style.animationDuration=(2+Math.random()*2)+'s';
+  document.body.appendChild(star);
+}
+
+</script>
+</body>
+</html>

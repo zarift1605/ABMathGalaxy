@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ABMath Galaxy</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      color: white;
+      background: radial-gradient(circle at bottom, #1d4ed8 10%, #3b82f6 40%, #9333ea 100%);
+    }
+
+    /* ✨ Twinkling Stars */
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite ease-in-out alternate;
+    }
+
+    @keyframes twinkle {
+      from { opacity: 0.3; transform: scale(1); }
+      to { opacity: 1; transform: scale(1.5); }
+    }
+
+    /* 🚀 Floating Animation */
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+      100% { transform: translateY(0px); }
+    }
+
+    @keyframes flyAcross {
+      0% { transform: translateX(-200px) rotate(10deg); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(120vw) rotate(25deg); opacity: 0; }
+    }
+
+    /* 🌟 Central Layout */
+    .center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      position: relative;
+      z-index: 3;
+    }
+
+    .center-image {
+      width: 180px;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 15px 0 20px;
+      animation: spaceshipEntrance 2s ease-out;
+      text-shadow: 2px 2px 10px #00f2ff;
+    }
+
+    @keyframes spaceshipEntrance {
+      from { transform: translateY(-50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+ .subject-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  width: 240px;       /* Slightly bigger for kids */
+  height: 150px;      
+  font-size: 1.1em;   
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 25px; /* Rounder for fun look */
+  cursor: pointer;
+  background: linear-gradient(to right, #ff9a00, #ff2d95); /* Brighter gradient */
+  box-shadow: 0 0 20px #ff9a00;
+  transition: all 0.3s ease;
+  animation: float 4s ease-in-out infinite;
+}
+
+.subject-btn:hover {
+  transform: scale(1.15) rotate(-2deg); /* Slight tilt for playful feel */
+  box-shadow: 0 0 30px #ff2d95;
+  background: linear-gradient(to right, #00f2ff, #ff6ec7);
+}
+
+.btn-icon {
+  width: 80px;       /* Bigger and more noticeable */
+  height: 80px;
+  margin-bottom: 10px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.subject-btn:hover .btn-icon {
+  transform: scale(1.3) rotate(10deg); /* Icon grows and tilts on hover */
+}
+
+.btn-text {
+  font-size: 1em;  
+  text-align: center;
+  white-space: nowrap;
+  text-shadow: 1px 1px 5px #000;
+}
+
+
+    /* 🎵 Music + Menu Buttons */
+    .music-btn, .menu-btn {
+      position: absolute;
+      top: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2em;
+      color: white;
+      z-index: 10;
+      transition: background 0.3s ease;
+    }
+
+    .music-btn:hover, .menu-btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .music-btn { right: 20px; }
+    .menu-btn { left: 20px; }
+
+    /* 🌠 Flying Decorations */
+    img.icon {
+      position: absolute;
+      width: 100px;
+      opacity: 0.9;
+    }
+
+    .rocket { top: 150px; left: -150px; animation: flyAcross 15s linear infinite; }
+    .astronaut { bottom: 100px; right: 40px; animation: float 6s ease-in-out infinite; }
+    .alien { bottom: 30px; left: 50px; animation: float 5s ease-in-out infinite; }
+    .comet { top: 30px; right: -100px; animation: flyAcross 12s linear infinite reverse; }
+
+    /* 🌌 Dropdown Menu */
+    .dropdown {
+      display: none;
+      position: absolute;
+      top: 70px;
+      left: 20px;
+      background: rgba(0, 0, 0, 0.7);
+      border-radius: 10px;
+      padding: 10px 0;
+      min-width: 160px;
+      box-shadow: 0px 4px 10px rgba(0,0,0,0.5);
+      z-index: 9;
+    }
+
+    .dropdown a {
+      display: block;
+      padding: 10px 15px;
+      color: white;
+      text-decoration: none;
+      font-size: 1em;
+      transition: background 0.2s ease;
+    }
+
+    .dropdown a:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .show { display: block; }
+    .boy {
+  width: 120px;              /* Bigger for kids */
+  position: absolute;
+  bottom: 30px;
+  left: 50px;
+  animation: floatBounce 4s ease-in-out infinite, rotateSlight 6s ease-in-out infinite;
+  filter: drop-shadow(0 0 8px #ffd700); /* subtle glow */
+}
+
+/* Fun float + bounce */
+@keyframes floatBounce {
+  0% { transform: translateY(0); }
+  25% { transform: translateY(-15px); }
+  50% { transform: translateY(0); }
+  75% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+/* Slight rotation for playfulness */
+@keyframes rotateSlight {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(10deg); }
+}
+
+  </style>
+</head>
+<body>
+  <!-- 🎵 Controls -->
+  <button class="menu-btn" onclick="toggleMenu()">☰</button>
+  <button class="music-btn" onclick="toggleMusic()">🔊</button>
+
+  <div id="dropdownMenu" class="dropdown">
+    <a href="profile.html" onclick="playClick()">👤 Profil</a>
+    <a href="settings.html" onclick="playClick()">⚙️ Settings</a>
+    <a href="scoreboard.html" onclick="playClick()">📊 Scoreboard</a>
+  </div>
+
+  <!-- 🪐 Floating Images -->
+  <img src="roket.png" class="icon rocket" alt="Rocket">
+  <img src="rocket.png" class="icon astronaut" alt="Astronaut">
+  <img src="boy.png" class="icon boy" alt="Boy">
+  <img src="rocket.png" class="icon comet" alt="Comet">
+
+  <!-- ⭐ Random Stars -->
+  <script>
+    for (let i = 0; i < 60; i++) {
+      const star = document.createElement('div');
+      star.classList.add('star');
+      star.style.top = Math.random() * 100 + 'vh';
+      star.style.left = Math.random() * 100 + 'vw';
+      star.style.animationDuration = 2 + Math.random() * 2 + 's';
+      document.body.appendChild(star);
+    }
+  </script>
+
+  <!-- 🌍 Main Content -->
+  <div class="center">
+    <img src="planet.png" alt="planet" class="center-image">
+    <h1>Pilih Subjek Anda!</h1>
+    <button class="subject-btn" onclick="playClick(); window.location.href='selectActivityBm.html'">
+  <img src="bmIcon.png" class="btn-icon" alt="BM Icon">
+  <span class="btn-text">Bahasa Melayu</span>
+</button>
+
+<button class="subject-btn" onclick="playClick(); window.location.href='selectActivityMath.html'">
+  <img src="mathIcon.png" class="btn-icon" alt="Math Icon">
+  <span class="btn-text">Matematik</span>
+</button>
+
+  </div>
+
+  <!-- 🎶 Audio -->
+  <audio id="bg-music" autoplay loop>
+    <source src="bgMusic.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="click-sound">
+    <source src="click.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const music = document.getElementById('bg-music');
+    const clickSound = document.getElementById('click-sound');
+    const musicBtn = document.querySelector('.music-btn');
+
+    function playClick() {
+      clickSound.currentTime = 0;
+      clickSound.play();
+    }
+
+    function toggleMenu() {
+      document.getElementById('dropdownMenu').classList.toggle('show');
+    }
+
+    window.addEventListener("click", function(event) {
+      if (!event.target.matches(".menu-btn")) {
+        document.querySelector('.dropdown').classList.remove('show');
+      }
+    });
+
+    // Save music progress
+    window.addEventListener('beforeunload', () => {
+      localStorage.setItem('bgMusicTime', music.currentTime);
+    });
+
+// ======== Music toggle & persistence across all pages ========
+function toggleMusic() {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  
+  if (music.paused) {
+    music.play();
+    btn.textContent = '🔊';
+    localStorage.setItem('musicState', 'playing');
+  } else {
+    music.pause();
+    btn.textContent = '🔇';
+    localStorage.setItem('musicState', 'muted');
+  }
+}
+
+// When leaving the page, save the time
+window.addEventListener('beforeunload', () => {
+  const music = document.getElementById('bg-music');
+  localStorage.setItem('bgMusicTime', music.currentTime);
+});
+
+// When page loads, restore the state
+window.addEventListener('load', () => {
+  const music = document.getElementById('bg-music');
+  const btn = document.querySelector('.music-btn');
+  const savedTime = localStorage.getItem('bgMusicTime');
+  const musicState = localStorage.getItem('musicState');
+
+  if (savedTime) music.currentTime = parseFloat(savedTime);
+
+  if (musicState === 'muted') {
+    music.pause();
+    btn.textContent = '🔇';
+  } else {
+    music.play();
+    btn.textContent = '🔊';
+  }
+});
+
+  </script>
+</body>
+</html>
